@@ -637,6 +637,133 @@ main{min-width:0 !important;}
 #home.homeV6 .homeV6Icon{display:grid!important;place-items:center!important;overflow:hidden!important;}
 #home.homeV6 .homeV6GoalAvatar{display:block!important;margin-left:auto!important;padding:0!important;}
 </style>
+<style id="ranking-25-scroll">
+/* RANKING: 25 rows visible, only the body scrolls; header stays fixed */
+#ranking .table-wrap{
+  max-height:none;
+  overflow-x:auto;
+  overflow-y:hidden;
+  border-radius:12px;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(120,190,220,.55) rgba(8,18,27,.55);
+}
+#ranking .table-wrap::-webkit-scrollbar{width:9px;height:9px}
+#ranking .table-wrap::-webkit-scrollbar-track{background:rgba(8,18,27,.55);border-radius:10px}
+#ranking .table-wrap::-webkit-scrollbar-thumb{background:rgba(120,190,220,.55);border-radius:10px}
+#ranking .table-wrap::-webkit-scrollbar-thumb:hover{background:rgba(150,220,245,.72)}
+
+#ranking .table-wrap table{
+  display:table;
+  width:100%;
+  min-width:760px;
+  table-layout:fixed;
+  overflow:visible !important;
+  border-collapse:separate;
+  border-spacing:0;
+}
+
+#ranking .table-wrap thead{
+  display:table;
+  width:100%;
+  table-layout:fixed;
+  position:static;
+}
+
+#ranking .table-wrap thead tr{
+  display:table;
+  width:100%;
+  table-layout:fixed;
+}
+
+#ranking .table-wrap thead th{
+  position:static !important;
+  z-index:auto !important;
+  background:linear-gradient(180deg,#c2c9cf,#8e98a2) !important;
+  color:#15191d !important;
+  box-shadow:0 2px 0 rgba(0,0,0,.45);
+}
+
+#ranking .table-wrap tbody{
+  display:block;
+  width:100%;
+  max-height:1045px;
+  overflow-y:auto;
+  overflow-x:hidden;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(120,190,220,.55) rgba(8,18,27,.55);
+}
+
+#ranking .table-wrap tbody::-webkit-scrollbar{width:9px}
+#ranking .table-wrap tbody::-webkit-scrollbar-track{background:rgba(8,18,27,.55);border-radius:10px}
+#ranking .table-wrap tbody::-webkit-scrollbar-thumb{background:rgba(120,190,220,.55);border-radius:10px}
+#ranking .table-wrap tbody::-webkit-scrollbar-thumb:hover{background:rgba(150,220,245,.72)}
+
+#ranking .table-wrap tbody tr{
+  display:table;
+  width:100%;
+  table-layout:fixed;
+}
+
+@media(max-width:600px){
+  #ranking .table-wrap tbody{max-height:995px}
+}
+</style>
+<style id="ranking-column-size-fix">
+/* RANKING COLUMN SIZE FIX */
+#ranking .table-wrap table{
+  width:100%;
+  min-width:760px;
+  table-layout:fixed;
+}
+
+/* Same widths for header and body */
+#ranking .table-wrap th:nth-child(1),
+#ranking .table-wrap td:nth-child(1){width:11%}
+
+#ranking .table-wrap th:nth-child(2),
+#ranking .table-wrap td:nth-child(2){
+  width:24%;
+  white-space:nowrap;
+}
+
+#ranking .table-wrap th:nth-child(3),
+#ranking .table-wrap td:nth-child(3){width:11%}
+
+#ranking .table-wrap th:nth-child(4),
+#ranking .table-wrap td:nth-child(4){width:11%}
+
+#ranking .table-wrap th:nth-child(5),
+#ranking .table-wrap td:nth-child(5){width:11%}
+
+#ranking .table-wrap th:nth-child(6),
+#ranking .table-wrap td:nth-child(6){width:16%}
+
+#ranking .table-wrap th:nth-child(7),
+#ranking .table-wrap td:nth-child(7){width:16%}
+
+/* Keep usernames on one line and make long names fit cleanly */
+#ranking .table-wrap tbody td:nth-child(2){
+  font-size:13px;
+  font-weight:800;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  padding-left:8px;
+  padding-right:8px;
+}
+
+#ranking .table-wrap thead th:nth-child(2){
+  white-space:nowrap;
+  padding-left:6px;
+  padding-right:6px;
+}
+
+/* Slightly tighter cells so the table feels balanced */
+#ranking .table-wrap th,
+#ranking .table-wrap td{
+  padding:9px 8px;
+}
+</style>
 </head><body><div class="wrap">
 <div class="wrap">
 <header class="hero"><div class="brand"><img id="siteLogo" class="logo" src="logo.png"><div class="brandText"><h1 id="siteTitle">eFootball <span>Community</span></h1><div id="siteSubtitle" class="sub">Rank Member Komunitas eFootball ID🇮🇩</div></div></div><div id="liveBadge" class="badge">🟢 LIVE COMMUNITY TABLE</div></header>
