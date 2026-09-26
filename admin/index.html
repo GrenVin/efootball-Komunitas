@@ -87,6 +87,60 @@ body:after{background:linear-gradient(90deg,rgba(0,0,0,.28),transparent 28%,tran
     margin-top:2px;
   }
 }
+
+/* RANK MOVEMENT — inline with rank, no extra column */
+.rankCell{white-space:nowrap;text-align:center!important;vertical-align:middle}
+.rankNum{font-size:1.15em;font-weight:900;line-height:1}
+.rankMove{display:inline-block;margin-left:5px;font-size:.68em;font-weight:800;line-height:1;vertical-align:middle;opacity:.9}
+.rankMove.up{color:#64e6a5}.rankMove.down{color:#ff7d87}.rankMove.same{color:#8f9aa5}
+
+/* ===== MOBILE OPTIMIZATION V2 ===== */
+@media (max-width: 700px){
+  html,body{width:100%;max-width:100%;overflow-x:hidden;-webkit-text-size-adjust:100%;}
+  body{background-attachment:scroll;}
+  .wrap{width:100%;max-width:none;padding:10px 10px 24px;}
+  .hero{gap:10px;margin-bottom:10px;}
+  .brand{gap:9px;min-width:0;}
+  .brandText{min-width:0;}
+  .logo{width:44px;height:44px;}
+  h1{font-size:21px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .brandText .sub{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .layout{display:block;width:100%;}
+  .sidebar{position:sticky;top:8px;z-index:15;width:100%;padding:7px;display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;border-radius:12px;margin-bottom:10px;}
+  .sidebar::-webkit-scrollbar{display:none;}
+  .navbtn{flex:0 0 auto;min-width:96px;width:auto;justify-content:center;padding:10px 9px;margin:0;font-size:11px;gap:5px;border-radius:9px;white-space:nowrap;}
+  .navicon{width:auto;font-size:15px;}
+  main{width:100%;min-width:0;}
+  .panel{width:100%;min-width:0;padding:12px;border-radius:12px;}
+  .panel h2{font-size:19px;line-height:1.2;}
+  .row{gap:8px;}
+  .table-wrap{width:100%;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  table{min-width:680px;}
+  th,td{padding:8px 7px;font-size:12px;}
+  .cards{grid-template-columns:1fr;gap:9px;}
+  .card{padding:11px;border-radius:11px;}
+  .form,.form.match{grid-template-columns:1fr;gap:8px;}
+  .form button,.form.match button{grid-column:auto;width:100%;min-height:42px;}
+  .field input,.field select{min-height:42px;font-size:16px;}
+  .btn{min-height:42px;}
+  .adminGrid,.settings{grid-template-columns:1fr;gap:10px;}
+  .settingCard{padding:12px;}
+  .memberHeader{display:none;}
+  .memberRow{grid-template-columns:1fr 1fr;gap:8px;padding:10px;}
+  .memberActions{grid-column:1/-1;justify-content:flex-start;flex-wrap:wrap;}
+  .memberActions .btn{flex:1 1 auto;}
+  .historyAdminRow{grid-template-columns:1fr 1fr;gap:8px;}
+  .historyAdminHead{display:none;}
+  .matchLine{grid-template-columns:1fr;gap:6px;padding:9px 10px;}
+  .modal{padding:8px;align-items:flex-end;}
+  .modalBox{max-height:92vh;border-radius:14px;padding:13px;}
+  .uploadPreview{max-height:110px;}
+}
+@media (max-width:380px){
+  .wrap{padding-left:7px;padding-right:7px;}
+  .panel{padding:10px;}
+  .navbtn{min-width:86px;font-size:10px;}
+}
 </style></head><body><iframe id="dataBridge" src="../index.html?bridge=1" style="display:none;width:0;height:0;border:0"></iframe><div class="wrap"><header class="hero"><div class="brand"><img id="adminSiteLogo" class="logo" src="../logo.png"><div class="brandText"><h1 id="adminPanelTitle">eFootball Community</h1><div class="sub" id="adminPanelSubtitle">ADMIN PANEL — pengelolaan website</div></div></div><div class="badge" id="adminPanelBadge">🔐 ADMIN PANEL</div></header><div class="panel" style="margin-bottom:14px"><div class="row"><div><b id="adminAreaTitle">Admin Area</b><div class="muted small" id="adminAreaDesc">Semua perubahan data di sini dipakai oleh website Member.</div></div><a class="btn" id="adminBackButton" href="../index.html">← Website Member</a></div></div><div class="hidden" aria-hidden="true"><h1 id="siteTitle"></h1><div id="siteSubtitle"></div><img id="siteLogo"><div id="liveBadge"></div><div id="navH2H"></div><div id="navRanking"></div><div id="navPlayers"></div><div id="navAdmin"></div><div id="footerTitle"></div><div id="footerText"></div><div id="h2hTitle"></div><div id="h2hDesc"></div><div id="rankingTitle"></div><div id="rankingDesc"></div><div id="playersTitle"></div><table id="matrix"></table><table id="rankingTable"></table><div id="playerCards"></div></div><section id="admin" class="panel">
  <div id="adminLogin"><div id="loginNotice" class="notice">Masuk menggunakan akun Admin Supabase.</div><div class="form"><div class="field"><label>Email Admin</label><input id="adminEmail" type="email" placeholder="email admin"></div><div class="field"><label>Password Admin</label><input id="pin" type="password" placeholder="password"></div><button class="btn primary" id="loginBtn">Masuk Admin</button></div></div>
  <div id="adminPanel" class="hidden">
@@ -246,9 +300,20 @@ function currentPeriodIsArchived(){return !!state.selectedLeagueArchive && state
 
 state.settings={...DEFAULT_SETTINGS,...(state.settings||{})};state.leagueAssignments=state.leagueAssignments&&typeof state.leagueAssignments==='object'?state.leagueAssignments:{};if(Object.keys(state.leagueAssignments).length===0&&Array.isArray(state.leagueMembers)&&state.leagueMembers.length){state.leagueMembers.forEach(id=>state.leagueAssignments[id]='amateur')};ensureLeaguePeriods(state);ensureLeaguePeriods(state)
 let adminSession=false;
-function normalizeRemote(row){if(!row||!row.data)return false;state=row.data;state.dataInitialized=true;state.settings={...DEFAULT_SETTINGS,...(state.settings||{})};state.leagueMembers=Array.isArray(state.leagueMembers)?state.leagueMembers:[];state.leagueAssignments=state.leagueAssignments&&typeof state.leagueAssignments==='object'?state.leagueAssignments:{};if(Object.keys(state.leagueAssignments).length===0&&state.leagueMembers.length){state.leagueMembers.forEach(id=>state.leagueAssignments[id]='amateur')}localStorage.setItem(KEY,JSON.stringify(state));return true}
+let rankingBaseline=rankingRanks();
+function ensureRankingBaseline(){
+  if(!rankingBaseline) rankingBaseline=rankingRanks();
+}
+function updateRankingMovementSnapshot(){
+  ensureRankingBaseline();
+  const current=rankingRanks();
+  const changed=JSON.stringify(current)!==JSON.stringify(rankingBaseline);
+  if(changed) state.rankingPrevious={...rankingBaseline};
+  return {current,changed};
+}
+function normalizeRemote(row){if(!row||!row.data)return false;state=row.data;state.dataInitialized=true;state.settings={...DEFAULT_SETTINGS,...(state.settings||{})};state.leagueMembers=Array.isArray(state.leagueMembers)?state.leagueMembers:[];state.leagueAssignments=state.leagueAssignments&&typeof state.leagueAssignments==='object'?state.leagueAssignments:{};if(Object.keys(state.leagueAssignments).length===0&&state.leagueMembers.length){state.leagueMembers.forEach(id=>state.leagueAssignments[id]='amateur')}localStorage.setItem(KEY,JSON.stringify(state));rankingBaseline=rankingRanks();return true}
 async function loadRemote(){try{const {data,error}=await supabaseClient.from('app_state').select('data').eq('id',1).single();if(!error&&normalizeRemote(data)){renderAll();}}catch(e){console.warn('Supabase load failed',e)}}
-async function save(){state.dataInitialized=true;localStorage.setItem(KEY,JSON.stringify(state));renderAll();if(!adminSession){alert('Sesi admin belum aktif.');return false}const {error}=await supabaseClient.from('app_state').update({data:state,updated_at:new Date().toISOString()}).eq('id',1);if(error){console.error(error);alert('Gagal menyimpan ke database online: '+error.message);return false}return true}
+async function save(){state.dataInitialized=true;const movement=updateRankingMovementSnapshot();localStorage.setItem(KEY,JSON.stringify(state));renderAll();if(!adminSession){alert('Sesi admin belum aktif.');return false}const {error}=await supabaseClient.from('app_state').update({data:state,updated_at:new Date().toISOString()}).eq('id',1);if(error){console.error(error);alert('Gagal menyimpan ke database online: '+error.message);return false}rankingBaseline=movement.current;return true}
 loadRemote();
 function player(id){return state.players.find(p=>p.id===id)}
 function outcome(s1,s2){return s1>s2?'win':s1<s2?'loss':'draw'}
@@ -256,7 +321,30 @@ function isLiga(m){return m.type==='liga'||m.type==='league'}
 function statsFor(a,b,scope='table'){let w=0,l=0,d=0;state.matches.forEach(m=>{if(scope==='liga'&&!isLiga(m))return;if(m.p1===a&&m.p2===b){const o=outcome(m.s1,m.s2);if(o==='win')w++;else if(o==='loss')l++;else d++}else if(m.p2===a&&m.p1===b){const o=outcome(m.s2,m.s1);if(o==='win')w++;else if(o==='loss')l++;else d++}});return[w,l,d]}
 function totals(id,scope='table'){let w=0,l=0,d=0;state.players.forEach(p=>{if(p.id!==id){const s=statsFor(id,p.id,scope);w+=s[0];l+=s[1];d+=s[2]}});return{w,l,d,m:w+l+d,pts:w*3+d}}
 function renderMatrix(){const ps=state.players,t=document.getElementById('matrix'),s=state.settings;let h='<thead><tr><th>'+esc(s.colId)+'</th>'+ps.map(p=>`<th>${esc(p.ef)}<br><span class="small muted">${esc(p.id)}</span></th>`).join('')+`<th>${esc(s.colWin)}</th><th>${esc(s.colLoss)}</th><th>${esc(s.colDraw)}</th><th>${esc(s.colMatches)}</th></tr></thead><tbody>`;ps.forEach(p=>{const x=totals(p.id);h+=`<tr><th>${esc(p.ef)}</th>`;ps.forEach(q=>{if(p.id===q.id)h+='<td class="dash">—</td>';else{const z=statsFor(p.id,q.id);h+=`<td class="cell"><span class="w">${z[0]}</span>-<span class="l">${z[1]}</span>-<span class="d">${z[2]}</span></td>`}});h+=`<td class="w"><b>${x.w}</b></td><td class="l"><b>${x.l}</b></td><td class="d"><b>${x.d}</b></td><td><b>${x.m}</b></td></tr>`});t.innerHTML=h+'</tbody>'}
-function renderRanking(){const rows=state.players.map(p=>({...p,...totals(p.id)})).sort((a,b)=>b.pts-a.pts||b.w-a.w||a.l-b.l);const s=state.settings;document.getElementById('rankingTable').innerHTML='<thead><tr><th>'+esc(s.colRank)+'</th><th>'+esc(s.colPlayer)+'</th><th>'+esc(s.colWin)+'</th><th>'+esc(s.colLoss)+'</th><th>'+esc(s.colDraw)+'</th><th>'+esc(s.colMatches)+'</th><th>'+esc(s.colPoints)+'</th></tr></thead><tbody>'+rows.map((p,i)=>`<tr><td>${i+1}</td><th>${esc(p.ef)}</th><td class="w">${p.w}</td><td class="l">${p.l}</td><td class="d">${p.d}</td><td>${p.m}</td><td><b>${p.pts}</b></td></tr>`).join('')+'</tbody>'}
+function rankingRanks(){
+  const rows=state.players.map(p=>({...p,...totals(p.id)})).sort((a,b)=>b.pts-a.pts||b.w-a.w||a.l-b.l||a.ef.localeCompare(b.ef));
+  const out={}; rows.forEach((p,i)=>{out[p.id]=i+1}); return out;
+}
+function movementMarkup(id,rank){
+  const prev=state.rankingPrevious?.[id];
+  if(!prev)return '<span class="rankMove same">—</span>';
+  if(prev===rank)return '<span class="rankMove same">—</span>';
+  const delta=prev-rank;
+  return `<span class="rankMove ${delta>0?'up':'down'}">${delta>0?'▲ +':'▼ '}${delta}</span>`;
+}
+function previousLeagueRank(key,period,id){
+  const periods=(state.leaguePeriods||[]).filter(p=>p.id!==period && p.status==='closed' && p.standings?.[key]).sort((a,b)=>String(b.closedAt||b.id).localeCompare(String(a.closedAt||a.id)));
+  const prev=periods[0]?.standings?.[key]?.find(r=>r.id===id);
+  return prev?.rank||null;
+}
+function leagueMovementMarkup(key,period,id,rank){
+  const prev=previousLeagueRank(key,period,id);
+  if(!prev)return '<span class="rankMove same">—</span>';
+  if(prev===rank)return '<span class="rankMove same">—</span>';
+  const delta=prev-rank;
+  return `<span class="rankMove ${delta>0?'up':'down'}">${delta>0?'▲ +':'▼ '}${delta}</span>`;
+}
+function renderRanking(){const rows=state.players.map(p=>({...p,...totals(p.id)})).sort((a,b)=>b.pts-a.pts||b.w-a.w||a.l-b.l||a.ef.localeCompare(b.ef));const s=state.settings;document.getElementById('rankingTable').innerHTML='<thead><tr><th>'+esc(s.colRank)+'</th><th>'+esc(s.colPlayer)+'</th><th>'+esc(s.colWin)+'</th><th>'+esc(s.colLoss)+'</th><th>'+esc(s.colDraw)+'</th><th>'+esc(s.colMatches)+'</th><th>'+esc(s.colPoints)+'</th></tr></thead><tbody>'+rows.map((p,i)=>`<tr><td class="rankCell"><span class="rankNum">${i+1}</span>${movementMarkup(p.id,i+1)}</td><th>${esc(p.ef)}</th><td class="w">${p.w}</td><td class="l">${p.l}</td><td class="d">${p.d}</td><td>${p.m}</td><td><b>${p.pts}</b></td></tr>`).join('')+'</tbody>'}
 function renderPlayers(){document.getElementById('playerCards').innerHTML=state.players.map(p=>{const x=totals(p.id);return `<div class="card profile" data-player="${escAttr(p.id)}"><div class="muted small">eFootball ID</div><div class="big">${esc(p.ef)}</div><div class="muted">Match ${x.m}</div><div><span class="w">W ${x.w}</span> · <span class="l">L ${x.l}</span> · <span class="d">D ${x.d}</span></div><div class="profileMeta"><div class="mini">WhatsApp<br><b>${esc(p.wa||'-')}</b></div><div class="mini">Telegram<br><b>${esc(p.tg||'-')}</b></div></div></div>`}).join('');document.querySelectorAll('.profile').forEach(c=>c.addEventListener('click',()=>openHistory(c.dataset.player)))}
 function renderSelects(){const opts=state.players.map(p=>`<option value="${escAttr(p.id)}">${esc(p.ef)}</option>`).join('');document.getElementById('p1').innerHTML=opts;document.getElementById('p2').innerHTML=opts;if(state.players.length>1)document.getElementById('p2').selectedIndex=1}
 function leagueName(key){const s=state.settings;return key==='pro'?(s.proLeagueName||'Pro League'):key==='semi'?(s.semiLeagueName||'Semi-Pro League'):(s.amateurLeagueName||'Amateur League')}
