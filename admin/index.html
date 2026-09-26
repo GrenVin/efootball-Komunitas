@@ -93,54 +93,6 @@ body:after{background:linear-gradient(90deg,rgba(0,0,0,.28),transparent 28%,tran
 .rankNum{font-size:1.15em;font-weight:900;line-height:1}
 .rankMove{display:inline-block;margin-left:5px;font-size:.68em;font-weight:800;line-height:1;vertical-align:middle;opacity:.9}
 .rankMove.up{color:#64e6a5}.rankMove.down{color:#ff7d87}.rankMove.same{color:#8f9aa5}
-
-/* ===== MOBILE OPTIMIZATION V2 ===== */
-@media (max-width: 700px){
-  html,body{width:100%;max-width:100%;overflow-x:hidden;-webkit-text-size-adjust:100%;}
-  body{background-attachment:scroll;}
-  .wrap{width:100%;max-width:none;padding:10px 10px 24px;}
-  .hero{gap:10px;margin-bottom:10px;}
-  .brand{gap:9px;min-width:0;}
-  .brandText{min-width:0;}
-  .logo{width:44px;height:44px;}
-  h1{font-size:21px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .brandText .sub{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .layout{display:block;width:100%;}
-  .sidebar{position:sticky;top:8px;z-index:15;width:100%;padding:7px;display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;border-radius:12px;margin-bottom:10px;}
-  .sidebar::-webkit-scrollbar{display:none;}
-  .navbtn{flex:0 0 auto;min-width:96px;width:auto;justify-content:center;padding:10px 9px;margin:0;font-size:11px;gap:5px;border-radius:9px;white-space:nowrap;}
-  .navicon{width:auto;font-size:15px;}
-  main{width:100%;min-width:0;}
-  .panel{width:100%;min-width:0;padding:12px;border-radius:12px;}
-  .panel h2{font-size:19px;line-height:1.2;}
-  .row{gap:8px;}
-  .table-wrap{width:100%;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
-  table{min-width:680px;}
-  th,td{padding:8px 7px;font-size:12px;}
-  .cards{grid-template-columns:1fr;gap:9px;}
-  .card{padding:11px;border-radius:11px;}
-  .form,.form.match{grid-template-columns:1fr;gap:8px;}
-  .form button,.form.match button{grid-column:auto;width:100%;min-height:42px;}
-  .field input,.field select{min-height:42px;font-size:16px;}
-  .btn{min-height:42px;}
-  .adminGrid,.settings{grid-template-columns:1fr;gap:10px;}
-  .settingCard{padding:12px;}
-  .memberHeader{display:none;}
-  .memberRow{grid-template-columns:1fr 1fr;gap:8px;padding:10px;}
-  .memberActions{grid-column:1/-1;justify-content:flex-start;flex-wrap:wrap;}
-  .memberActions .btn{flex:1 1 auto;}
-  .historyAdminRow{grid-template-columns:1fr 1fr;gap:8px;}
-  .historyAdminHead{display:none;}
-  .matchLine{grid-template-columns:1fr;gap:6px;padding:9px 10px;}
-  .modal{padding:8px;align-items:flex-end;}
-  .modalBox{max-height:92vh;border-radius:14px;padding:13px;}
-  .uploadPreview{max-height:110px;}
-}
-@media (max-width:380px){
-  .wrap{padding-left:7px;padding-right:7px;}
-  .panel{padding:10px;}
-  .navbtn{min-width:86px;font-size:10px;}
-}
 </style></head><body><iframe id="dataBridge" src="../index.html?bridge=1" style="display:none;width:0;height:0;border:0"></iframe><div class="wrap"><header class="hero"><div class="brand"><img id="adminSiteLogo" class="logo" src="../logo.png"><div class="brandText"><h1 id="adminPanelTitle">eFootball Community</h1><div class="sub" id="adminPanelSubtitle">ADMIN PANEL — pengelolaan website</div></div></div><div class="badge" id="adminPanelBadge">🔐 ADMIN PANEL</div></header><div class="panel" style="margin-bottom:14px"><div class="row"><div><b id="adminAreaTitle">Admin Area</b><div class="muted small" id="adminAreaDesc">Semua perubahan data di sini dipakai oleh website Member.</div></div><a class="btn" id="adminBackButton" href="../index.html">← Website Member</a></div></div><div class="hidden" aria-hidden="true"><h1 id="siteTitle"></h1><div id="siteSubtitle"></div><img id="siteLogo"><div id="liveBadge"></div><div id="navH2H"></div><div id="navRanking"></div><div id="navPlayers"></div><div id="navAdmin"></div><div id="footerTitle"></div><div id="footerText"></div><div id="h2hTitle"></div><div id="h2hDesc"></div><div id="rankingTitle"></div><div id="rankingDesc"></div><div id="playersTitle"></div><table id="matrix"></table><table id="rankingTable"></table><div id="playerCards"></div></div><section id="admin" class="panel">
  <div id="adminLogin"><div id="loginNotice" class="notice">Masuk menggunakan akun Admin Supabase.</div><div class="form"><div class="field"><label>Email Admin</label><input id="adminEmail" type="email" placeholder="email admin"></div><div class="field"><label>Password Admin</label><input id="pin" type="password" placeholder="password"></div><button class="btn primary" id="loginBtn">Masuk Admin</button></div></div>
  <div id="adminPanel" class="hidden">
