@@ -225,6 +225,12 @@ main{min-width:0 !important;}
 #home.homeV4 .homeTopGoalPlayer{font-size:10px!important}
 @media(max-width:900px){#home.homeV4 .top3Row{height:90px!important;min-height:90px!important}}
 @media(max-width:600px){#home.homeV4 .homePlayer{font-size:12px!important}#home.homeV4 .recentPlayer b{font-size:10px!important}#home.homeV4 .homeCard h3{font-size:12px!important}}
+
+/* RANK MOVEMENT — inline with rank, no extra column */
+.rankCell{white-space:nowrap;text-align:center!important;vertical-align:middle}
+.rankNum{font-size:1.15em;font-weight:900;line-height:1}
+.rankMove{display:inline-block;margin-left:5px;font-size:.68em;font-weight:800;line-height:1;vertical-align:middle;opacity:.9}
+.rankMove.up{color:#64e6a5}.rankMove.down{color:#ff7d87}.rankMove.same{color:#8f9aa5}
 </style>
 <style id="HOME-READABLE-DARK-BLUE">
 /* HOME ONLY: keep the original dark blue/silver dashboard theme, but make text and borders readable. */
@@ -721,9 +727,32 @@ function isLiga(m){return m.type==='liga'||m.type==='league'}
 function statsFor(a,b,scope='table'){let w=0,l=0,d=0;state.matches.forEach(m=>{if(scope==='liga'&&!isLiga(m))return;if(m.p1===a&&m.p2===b){const o=outcome(m.s1,m.s2);if(o==='win')w++;else if(o==='loss')l++;else d++}else if(m.p2===a&&m.p1===b){const o=outcome(m.s2,m.s1);if(o==='win')w++;else if(o==='loss')l++;else d++}});return[w,l,d]}
 function totals(id,scope='table'){let w=0,l=0,d=0;state.players.forEach(p=>{if(p.id!==id){const s=statsFor(id,p.id,scope);w+=s[0];l+=s[1];d+=s[2]}});return{w,l,d,m:w+l+d,pts:w*3+d}}
 function renderMatrix(){const ps=state.players,t=document.getElementById('matrix'),s=state.settings;let h='<thead><tr><th>'+esc(s.colId)+'</th>'+ps.map(p=>`<th>${esc(p.ef)}<br><span class="small muted">${esc(p.id)}</span></th>`).join('')+`<th>${esc(s.colWin)}</th><th>${esc(s.colLoss)}</th><th>${esc(s.colDraw)}</th><th>${esc(s.colMatches)}</th></tr></thead><tbody>`;ps.forEach(p=>{const x=totals(p.id);h+=`<tr><th>${esc(p.ef)}</th>`;ps.forEach(q=>{if(p.id===q.id)h+='<td class="dash">—</td>';else{const z=statsFor(p.id,q.id);h+=`<td class="cell"><span class="w">${z[0]}</span>-<span class="l">${z[1]}</span>-<span class="d">${z[2]}</span></td>`}});h+=`<td class="w"><b>${x.w}</b></td><td class="l"><b>${x.l}</b></td><td class="d"><b>${x.d}</b></td><td><b>${x.m}</b></td></tr>`});t.innerHTML=h+'</tbody>'}
-function maskWA(v){v=String(v||'').replace(/\D/g,'');if(!v)return '';if(v.length<12)return v;return v.slice(0,3)+'***'+v.slice(6,9)+'**'+v.slice(-1)}
+function maskWA(v){v=String(v||'').replace(/\D/g,'');if(!v)return '';if(v.length<=4)return v.slice(0,1)+'***';if(v.length<=7)return v.slice(0,2)+'***'+v.slice(-1);return v.slice(0,4)+'***'+v.slice(-2)}
 function maskTG(v){v=String(v||'');if(!v)return '-';return v.length<=7?v.slice(0,3)+'*****':v.slice(0,5)+'*****'}
-function renderRanking(){const rows=state.players.map(p=>({...p,...totals(p.id)})).sort((a,b)=>b.pts-a.pts||b.w-a.w||a.l-b.l);const s=state.settings;document.getElementById('rankingTable').innerHTML='<thead><tr><th>'+esc(s.colRank)+'</th><th>'+esc(s.colPlayer)+'</th><th>'+esc(s.colWin)+'</th><th>'+esc(s.colLoss)+'</th><th>'+esc(s.colDraw)+'</th><th>'+esc(s.colMatches)+'</th><th>'+esc(s.colPoints)+'</th></tr></thead><tbody>'+rows.map((p,i)=>`<tr><td>${i+1}</td><th>${esc(p.ef)}</th><td class="w">${p.w}</td><td class="l">${p.l}</td><td class="d">${p.d}</td><td>${p.m}</td><td><b>${p.pts}</b></td></tr>`).join('')+'</tbody>'}
+function rankingRanks(){
+  const rows=state.players.map(p=>({...p,...totals(p.id)})).sort((a,b)=>b.pts-a.pts||b.w-a.w||a.l-b.l||a.ef.localeCompare(b.ef));
+  const out={}; rows.forEach((p,i)=>{out[p.id]=i+1}); return out;
+}
+function movementMarkup(id,rank){
+  const prev=state.rankingPrevious?.[id];
+  if(!prev)return '<span class="rankMove same">—</span>';
+  if(prev===rank)return '<span class="rankMove same">—</span>';
+  const delta=prev-rank;
+  return `<span class="rankMove ${delta>0?'up':'down'}">${delta>0?'▲ +':'▼ '}${delta}</span>`;
+}
+function previousLeagueRank(key,period,id){
+  const periods=(state.leaguePeriods||[]).filter(p=>p.id!==period && p.status==='closed' && p.standings?.[key]).sort((a,b)=>String(b.closedAt||b.id).localeCompare(String(a.closedAt||a.id)));
+  const prev=periods[0]?.standings?.[key]?.find(r=>r.id===id);
+  return prev?.rank||null;
+}
+function leagueMovementMarkup(key,period,id,rank){
+  const prev=previousLeagueRank(key,period,id);
+  if(!prev)return '<span class="rankMove same">—</span>';
+  if(prev===rank)return '<span class="rankMove same">—</span>';
+  const delta=prev-rank;
+  return `<span class="rankMove ${delta>0?'up':'down'}">${delta>0?'▲ +':'▼ '}${delta}</span>`;
+}
+function renderRanking(){const rows=state.players.map(p=>({...p,...totals(p.id)})).sort((a,b)=>b.pts-a.pts||b.w-a.w||a.l-b.l||a.ef.localeCompare(b.ef));const s=state.settings;document.getElementById('rankingTable').innerHTML='<thead><tr><th>'+esc(s.colRank)+'</th><th>'+esc(s.colPlayer)+'</th><th>'+esc(s.colWin)+'</th><th>'+esc(s.colLoss)+'</th><th>'+esc(s.colDraw)+'</th><th>'+esc(s.colMatches)+'</th><th>'+esc(s.colPoints)+'</th></tr></thead><tbody>'+rows.map((p,i)=>`<tr><td class="rankCell"><span class="rankNum">${i+1}</span>${movementMarkup(p.id,i+1)}</td><th>${esc(p.ef)}</th><td class="w">${p.w}</td><td class="l">${p.l}</td><td class="d">${p.d}</td><td>${p.m}</td><td><b>${p.pts}</b></td></tr>`).join('')+'</tbody>'}
 function leagueName(key){const s=state.settings;return key==='pro'?(s.proLeagueName||'Pro League'):key==='semi'?(s.semiLeagueName||'Semi-Pro League'):(s.amateurLeagueName||'Amateur League')}
 function leagueCapacity(key){return key==='pro'?20:key==='semi'?24:30}
 function statusFor(key,rank){const s=state.settings;if(rank===1)return {cls:'status-champion',text:s.statusChampion||'🏆 Champion'};if(rank<=3)return {cls:'status-promoted',text:s.statusPromoted||'🟢 Promoted'};if(key==='pro'&&rank>=18&&rank<=20)return {cls:'status-relegated',text:s.statusRelegated||'🔻 Relegated'};if(key==='semi'&&rank>=22&&rank<=24)return {cls:'status-relegated',text:s.statusRelegated||'🔻 Relegated'};return {cls:'status-retained',text:s.statusRetained||'⚪ Retained'}}
@@ -774,12 +803,39 @@ function renderLeague(){
   document.getElementById('leagueTable').innerHTML='<thead><tr><th>#</th><th>eFootball Username</th><th>M</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>PTS</th><th>STATUS</th></tr></thead><tbody>'+rows.map((p,i)=>{
     const rank=p.rank||i+1; const st=p.statusText?{cls:p.statusClass||'status-retained',text:p.statusText}:statusFor(selectedLeague,rank);
     const gf=Number(p.gf||0),ga=Number(p.ga||0),gd=Number(p.gd??(gf-ga));
-    return `<tr><td>${rank}</td><th>${esc(p.ef||p.name||'')}</th><td>${Number(p.m||0)}</td><td class="w">${Number(p.w||0)}</td><td class="d">${Number(p.d||0)}</td><td class="l">${Number(p.l||0)}</td><td>${gf}</td><td>${ga}</td><td>${gd>=0?'+':''}${gd}</td><td><b>${Number(p.pts||0)}</b></td><td><span class="leagueStatus ${st.cls}">${esc(st.text)}</span></td></tr>`
+    return `<tr><td class="rankCell"><span class="rankNum">${rank}</span>${leagueMovementMarkup(selectedLeague,period,p.id||p.playerId,rank)}</td><th>${esc(p.ef||p.name||'')}</th><td>${Number(p.m||0)}</td><td class="w">${Number(p.w||0)}</td><td class="d">${Number(p.d||0)}</td><td class="l">${Number(p.l||0)}</td><td>${gf}</td><td>${ga}</td><td>${gd>=0?'+':''}${gd}</td><td><b>${Number(p.pts||0)}</b></td><td><span class="leagueStatus ${st.cls}">${esc(st.text)}</span></td></tr>`
   }).join('')+'</tbody>';
   const titleEl=document.getElementById('leagueTitle');if(titleEl)titleEl.textContent=leagueName(selectedLeague);
   const cap=document.getElementById('leagueMemberCount');if(cap)cap.textContent=`${rows.length} / ${leagueCapacity(selectedLeague)} member`;
   const capText=document.getElementById('leagueCapacityText');if(capText)capText.textContent=s.leagueCapacityText||'Capacity: Pro 20 · Semi-Pro 24 · Amateur 30';
   document.querySelectorAll('.leagueTab').forEach(b=>b.classList.toggle('active',b.dataset.league===selectedLeague));
+}
+function playerFormData(id){
+  const ms=state.matches.filter(m=>m.p1===id||m.p2===id).slice().sort((a,b)=>{
+    const da=parseMatchDate(a.date), db=parseMatchDate(b.date);
+    const ta=da?da.getTime():0, tb=db?db.getTime():0;
+    return tb-ta || (Number(b.id)||0)-(Number(a.id)||0);
+  });
+  const recent=ms.slice(0,5).map(m=>{
+    const s1=m.p1===id?Number(m.s1)||0:Number(m.s2)||0;
+    const s2=m.p1===id?Number(m.s2)||0:Number(m.s1)||0;
+    const o=outcome(s1,s2);
+    return o==='win'?'W':o==='loss'?'L':'D';
+  });
+  let streak=0, streakType=recent[0]||'';
+  for(const r of recent){ if(r!==streakType) break; streak++; }
+  return {recent,recentPadded:Array(5).fill('').map((_,i)=>recent[i]||''),streak,streakType};
+}
+function parseMatchDate(v){
+  const s=String(v||'').trim();
+  let m=s.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})$/);
+  if(m) return new Date(Number(m[3]),Number(m[2])-1,Number(m[1]));
+  const d=new Date(s); return Number.isNaN(d.getTime())?null:d;
+}
+function playerFormMarkup(id){
+  const f=playerFormData(id);
+  const label=f.streak?`🔥 ${f.streak} ${f.streakType==='W'?'WIN':f.streakType==='L'?'LOSS':'DRAW'} STREAK`:'— NO STREAK';
+  return `<div class="playerForm"><div class="playerFormHead"><span>PLAYER FORM <small>LAST 5</small></span><b>${esc(label)}</b></div><div class="playerFormResults">${f.recentPadded.map(r=>`<span class="formDot ${r?r.toLowerCase():'empty'}">${r||'·'}</span>`).join('')}</div></div>`;
 }
 function renderPlayers(){
   const fallback='data:image/svg+xml;charset=UTF-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160"><circle cx="80" cy="80" r="76" fill="#0c141c" stroke="#7b8792" stroke-width="4"/><circle cx="80" cy="62" r="25" fill="#c5ccd3"/><path d="M35 135c7-31 25-46 45-46s38 15 45 46" fill="#c5ccd3"/></svg>');
@@ -816,6 +872,7 @@ function renderPlayers(){
         <div><span>MATCH</span><b>${p.m}</b></div>
       </div>
       <div class="playerWinRate"><div class="winRateHead"><span>WIN RATE</span><b>${rate}%</b></div><div class="winRateTrack"><i style="width:${rate}%"></i></div></div>
+      ${playerFormMarkup(p.id)}
       <div class="playerContactRow">
         <div class="mini playerContact"><span>WhatsApp</span><b>${esc(maskWA(p.wa))}</b></div>
         <div class="mini playerContact"><span>Telegram</span><b>${esc(maskTG(p.tg))}</b></div>
@@ -1053,6 +1110,19 @@ renderAll();
 .playersEmpty b{display:block;color:#dbe2e7;font-size:14px;margin-bottom:5px}
 .playersEmpty span{font-size:11px}
 
+
+/* PLAYER FORM — last 5 automatic results */
+.playerForm{margin-top:12px;padding:9px 10px;border:1px solid rgba(143,157,169,.16);border-radius:9px;background:rgba(255,255,255,.018)}
+.playerFormHead{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:8px;letter-spacing:.08em;color:#7f8b96;font-weight:800}
+.playerFormHead b{font-size:8px;letter-spacing:.02em;color:#b8c3cb;white-space:nowrap}
+.playerFormHead small{font-size:7px;color:#64717c;margin-left:3px}
+.playerFormResults{display:flex;gap:6px;margin-top:7px}
+.formDot{width:23px;height:23px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;border:1px solid rgba(255,255,255,.12);box-sizing:border-box}
+.formDot.w{background:rgba(38,200,145,.16);color:#55e0b1;border-color:rgba(38,200,145,.35)}
+.formDot.l{background:rgba(255,72,94,.14);color:#ff6d7f;border-color:rgba(255,72,94,.32)}
+.formDot.d{background:rgba(244,193,47,.14);color:#f5d35b;border-color:rgba(244,193,47,.32)}
+.formDot.empty{background:rgba(255,255,255,.025);color:#4f5b64;border-color:rgba(255,255,255,.08)}
+
 /* responsive */
 @media(max-width:1050px){
   .playerCardsGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
@@ -1072,6 +1142,58 @@ renderAll();
   .playersCountBadge{display:inline-block;margin-top:10px}
   .playersToolbar{grid-template-columns:1fr}
   .playerCardsGrid{grid-template-columns:1fr!important}
+}
+
+/* ===== MOBILE OPTIMIZATION V2 ===== */
+@media (max-width: 700px){
+  html,body{width:100%;max-width:100%;overflow-x:hidden;-webkit-text-size-adjust:100%;}
+  body{background-attachment:scroll;}
+  .wrap{width:100%;max-width:none;padding:10px 10px 24px;}
+  .hero{gap:10px;margin-bottom:10px;}
+  .brand{gap:9px;min-width:0;}
+  .brandText{min-width:0;}
+  .logo{width:44px;height:44px;}
+  h1{font-size:21px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .brandText .sub{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .layout{display:block;width:100%;}
+  .sidebar{position:sticky;top:8px;z-index:15;width:100%;padding:7px;display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;border-radius:12px;margin-bottom:10px;}
+  .sidebar::-webkit-scrollbar{display:none;}
+  .navbtn{flex:0 0 auto;min-width:96px;width:auto;justify-content:center;padding:10px 9px;margin:0;font-size:11px;gap:5px;border-radius:9px;white-space:nowrap;}
+  .navicon{width:auto;font-size:15px;}
+  main{width:100%;min-width:0;}
+  .panel{width:100%;min-width:0;padding:12px;border-radius:12px;}
+  .panel h2{font-size:19px;line-height:1.2;}
+  .panel h3{font-size:16px;}
+  .row{gap:8px;}
+  .table-wrap{width:100%;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  table{min-width:680px;}
+  th,td{padding:8px 7px;font-size:12px;}
+  .cards{grid-template-columns:1fr;gap:9px;}
+  .card{padding:11px;border-radius:11px;}
+  .profileTop{gap:8px;}
+  .avatarWrap{width:52px;height:52px;}
+  .big{font-size:20px;}
+  .profileMeta{gap:5px;}
+  .mini{padding:6px;font-size:11px;}
+  .form,.form.match{grid-template-columns:1fr;gap:8px;}
+  .form button,.form.match button{grid-column:auto;width:100%;min-height:42px;}
+  .field input,.field select{min-height:42px;font-size:16px;}
+  .btn{min-height:42px;}
+  .matchLine{grid-template-columns:1fr;gap:6px;padding:9px 10px;}
+  .matchLine .pill{grid-column:auto;justify-self:start;}
+  .modal{padding:8px;align-items:flex-end;}
+  .modalBox{max-height:92vh;border-radius:14px;padding:13px;}
+  .homeCards{grid-template-columns:1fr;}
+  .homeStats{grid-template-columns:1fr 1fr;}
+  .homeWelcome{min-height:210px;}
+  .homeWelcomeOverlay{padding:18px;}
+  .homeWelcome h2{font-size:25px;}
+}
+@media (max-width:380px){
+  .wrap{padding-left:7px;padding-right:7px;}
+  .panel{padding:10px;}
+  .navbtn{min-width:86px;font-size:10px;}
+  .homeStats{grid-template-columns:1fr;}
 }
 </style>
 
