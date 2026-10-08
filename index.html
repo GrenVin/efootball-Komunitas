@@ -1116,7 +1116,45 @@ async function getMyReportsMW(){const a=currentMemberAccountMW();if(!a)return[];
 function mergeApprovedReportsMW(){}
 function leagueSubmitKeyMW(){return 'ef_league_submits_v1';}
 function getLeagueSubmitsMW(){const remote=Array.isArray(state.leagueSubmits)?state.leagueSubmits:[];if(remote.length)return remote;try{return JSON.parse(localStorage.getItem(leagueSubmitKeyMW())||'[]')||[]}catch(e){return[]}}
-async function saveLeagueSubmitsMW(list){try{const {data:row,error:readError}=await supabaseClient.from('app_state').select('data').eq('id',1).single();if(readError)throw readError;const latest=row?.data&&typeof row.data==='object'?row.data:{};const merged={...latest,leagueSubmits:Array.isArray(list)?list:[]};state=merged;state.dataInitialized=true;state.leagueSubmits=Array.isArray(list)?list:[];localStorage.setItem(leagueSubmitKeyMW(),JSON.stringify(state.leagueSubmits));localStorage.setItem(KEY,JSON.stringify(state));const {error}=await supabaseClient.from('app_state').update({data:merged,updated_at:new Date().toISOString()}).eq('id',1);if(error)throw error;return true}catch(e){console.error('saveLeagueSubmitsMW',e);alert('Pendaftaran League gagal dikirim ke server: '+(e.message||e));return false}}
+async function saveLeagueSubmitsMW(list){
+  try{
+    const cleanList=Array.isArray(list)?list:[];
+    const {data:row,error:readError}=await supabaseClient.from('app_state').select('data').eq('id',1).single();
+    if(readError)throw readError;
+    const latest=row?.data&&typeof row.data==='object'?row.data:{};
+    const merged={...latest,leagueSubmits:cleanList};
+    const {error:updateError}=await supabaseClient.from('app_state').update({data:merged,updated_at:new Date().toISOString()}).eq('id',1);
+    if(updateError)throw updateError;
+    const {data:verifyRow,error:verifyError}=await supabaseClient.from('app_state').select('data').eq('id',1).single();
+    if(verifyError)throw verifyError;
+    const verified=verifyRow?.data&&typeof verifyRow.data==='object'?verifyRow.data:{};
+    const verifiedList=Array.isArray(verified.leagueSubmits)?verified.leagueSubmits:[];
+    const expectedIds=new Set(cleanList.map(x=>String(x.id)));
+    const missing=[...expectedIds].filter(id=>!verifiedList.some(x=>String(x.id)===id));
+    if(missing.length){
+      const retryMerged={...verified,leagueSubmits:cleanList};
+      const {error:retryError}=await supabaseClient.from('app_state').update({data:retryMerged,updated_at:new Date().toISOString()}).eq('id',1);
+      if(retryError)throw retryError;
+      const {data:retryVerify,error:retryVerifyError}=await supabaseClient.from('app_state').select('data').eq('id',1).single();
+      if(retryVerifyError)throw retryVerifyError;
+      const retryList=Array.isArray(retryVerify?.data?.leagueSubmits)?retryVerify.data.leagueSubmits:[];
+      const stillMissing=[...expectedIds].filter(id=>!retryList.some(x=>String(x.id)===id));
+      if(stillMissing.length)throw new Error('Data pengajuan League belum berhasil tersimpan di server.');
+      state={...retryVerify.data};
+    }else{
+      state={...verified};
+    }
+    state.dataInitialized=true;
+    state.leagueSubmits=Array.isArray(state.leagueSubmits)?state.leagueSubmits:cleanList;
+    localStorage.setItem(leagueSubmitKeyMW(),JSON.stringify(state.leagueSubmits));
+    localStorage.setItem(KEY,JSON.stringify(state));
+    return true;
+  }catch(e){
+    console.error('saveLeagueSubmitsMW',e);
+    alert('Pendaftaran League gagal dikirim ke server: '+(e.message||e));
+    return false;
+  }
+}
 function leagueSubmitStatusLabelMW(v){return v==='approved'?'🟢 Approved':v==='rejected'?'🔴 Rejected':'🟡 Pending';}
 async function cancelLeagueSubmitMW(id){
   const a=currentMemberAccountMW();
