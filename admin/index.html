@@ -454,7 +454,45 @@ function leaguePairExistsAdmin(home,away,league,period){return (state.matches||[
 
 async function rejectLeagueMatch(id){const item=(Array.isArray(state.leagueMatchSubmits)?state.leagueMatchSubmits:[]).find(x=>String(x.id)===String(id));if(!item||item.status!=='pending')return;if(!adminSession)return alert('Sesi admin belum aktif.');if(!confirm(`Reject Match League ${item.code||''}?\n\n${item.homeName||item.home} ${item.s1}–${item.s2} ${item.awayName||item.away}`))return;item.status='rejected';item.rejectedAt=Date.now();const ok=await save();if(ok){await renderApprovals();alert(`Match League ${item.code||''} ditolak.`)}}
 window.approveLeagueMatch=approveLeagueMatch; window.rejectLeagueMatch=rejectLeagueMatch; window.approveLeagueSubmit=approveLeagueSubmit; window.rejectLeagueSubmit=rejectLeagueSubmit; window.approveMember=approveMember; window.rejectMember=rejectMember; window.approveReport=approveReport; window.rejectReport=rejectReport;
-async function resetMemberPassword(id){if(!adminSession)return alert('Sesi admin belum aktif.');const member=state.players.find(p=>String(p.id)===String(id));if(!member)return alert('Member tidak ditemukan.');const account=Array.isArray(state.memberAccounts)?state.memberAccounts.find(a=>String(a.playerId)===String(id)):null;const authUserId=member.accountId||account?.id;if(!authUserId)return alert(`Member "${member.ef}" belum memiliki akun Supabase Auth. Silakan pastikan member sudah Register dan Approved.`);if(!confirm(`Reset password member "${member.ef}"?`))return;try{const{data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();if(sessionError)throw sessionError;const token=sessionData?.session?.access_token;if(!token)return alert('Sesi Admin tidak ditemukan. Silakan login Admin kembali.');const{data,error}=await supabaseClient.functions.invoke('admin-reset-password',{body:{playerId:String(id),authUserId:String(authUserId),username:String(member.ef)},headers:{Authorization:`Bearer ${token}`}});if(error)throw error;if(!data?.success)return alert(data?.error||'Reset password gagal.');alert(`✅ Password ${member.ef} berhasil di-reset!\n\nPassword sementara: ${data.temporaryPassword||'(lihat respons Edge Function)'}`)}catch(error){console.error('admin-reset-password error:',error);alert('Reset password gagal:\n'+(error?.message||String(error)))}} 
+async function resetMemberPassword(id){
+  if(!adminSession)return alert('Sesi admin belum aktif.');
+
+  const member=state.players.find(p=>String(p.id)===String(id));
+  if(!member)return alert('Member tidak ditemukan.');
+
+  const account=Array.isArray(state.memberAccounts)
+    ? state.memberAccounts.find(a=>String(a.playerId)===String(id))
+    : null;
+
+  const authUserId=member.accountId||account?.id||'';
+
+  if(!confirm(`Reset password member "${member.ef}"?`))return;
+
+  try{
+    const {data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();
+    if(sessionError)throw sessionError;
+
+    const token=sessionData?.session?.access_token;
+    if(!token)return alert('Sesi Admin tidak ditemukan. Silakan login Admin kembali.');
+
+    const {data,error}=await supabaseClient.functions.invoke('admin-reset-password',{
+      body:{
+        playerId:String(id),
+        authUserId:String(authUserId),
+        username:String(member.ef)
+      },
+      headers:{Authorization:`Bearer ${token}`}
+    });
+
+    if(error)throw new Error(data?.error||error.message||'Edge Function gagal.');
+    if(!data?.success)throw new Error(data?.error||'Reset password gagal.');
+
+    alert(`✅ Password ${member.ef} berhasil di-reset!\n\nPassword sementara: ${data.temporaryPassword||'(lihat respons Edge Function)'}`);
+  }catch(error){
+    console.error('admin-reset-password error:',error);
+    alert('Reset password gagal:\n'+(error?.message||String(error)));
+  }
+}
 window.addEventListener('storage',e=>{if(e.key===MEMBER_WORKFLOW_KEY_ADMIN){memberWorkflowAdmin=JSON.parse(e.newValue||'{}')||{pendingMembers:[],session:null,reports:[]};renderApprovals();}});
 function switchApprovalSub(sub){
   document.querySelectorAll('.approvalSubBtn').forEach(b=>b.classList.toggle('active',b.dataset.approvalSub===sub));
