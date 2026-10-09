@@ -1149,102 +1149,93 @@ function rivalStatsMW(account, rivalPlayerId){const myPlayer=currentMemberPlayer
 function renderRivalMW(){
   const account=currentMemberAccountMW();
   if(!account)return;
-  const empty=document.getElementById('myRivalEmpty'),box=document.getElementById('myRivalBox'),sel=document.getElementById('rivalSelect');
+  const empty=document.getElementById('myRivalEmpty');
+  const box=document.getElementById('myRivalBox');
+  const sel=document.getElementById('rivalSelect');
+  const players=Array.isArray(state.players)?state.players:[];
+  const byPlayerId=new Map(players.map(p=>[String(p.id),p]));
+  const meAccountId=String(account.id||'');
+  const mePlayerId=String(account.playerId||'');
 
-  // Rival list hanya dari akun member yang aktif.
-  const accounts = (state.memberAccounts || []).filter(
-    a => a && a.status === 'active'
-  );
-  const meAccountId = String(account.id || '');
-  const mePlayerId = String(account.playerId || '');
-  const players = Array.isArray(state.players) ? state.players : [];
-  const byPlayerId = new Map(
-    players.map(p => [String(p.id), p])
-  );
-  const rivals = [];
-  const seen = new Set();
-
-  accounts.forEach(a => {
-    const aid = String(a.id || '');
-    const pid = String(a.playerId || '');
-
-    if (!aid || aid === meAccountId) return;
-    if (pid && pid === mePlayerId) return;
-
-    const p = byPlayerId.get(pid);
-    const ef = String(a.ef || p?.ef || '').trim();
-    if (!ef) return;
-
-    const id = pid || aid;
-    if (seen.has(id)) return;
-
-    rivals.push({
-      id,
-      accountId: aid,
-      ef,
-      avatar: a.avatar || p?.avatar || '',
-      wa: a.wa || p?.wa || '',
-      tg: a.tg || p?.tg || ''
-    });
-
+  // Use only active member accounts; deduplicate by player ID and exclude self.
+  // Only show active member accounts. These usernames were deleted by Admin,
+  // so hide them from My Rival even if stale records remain in the browser/app_state.
+  const deletedRivalUsernames = new Set([
+    'dembele', 'asu@55', 'asu@555', 'asu@5555', 'aa1122'
+  ]);
+  const activeAccounts=(Array.isArray(state.memberAccounts)?state.memberAccounts:[])
+    .filter(a=>a
+      && String(a.status||'').toLowerCase()==='active'
+      && !deletedRivalUsernames.has(String(a.ef||a.username||'').trim().toLowerCase()));
+  const rivals=[];
+  const seen=new Set();
+  activeAccounts.forEach(a=>{
+    const aid=String(a.id||'');
+    const pid=String(a.playerId||'');
+    if(!aid||aid===meAccountId||(pid&&pid===mePlayerId))return;
+    const player=byPlayerId.get(pid);
+    const ef=String(a.ef||player?.ef||'').trim();
+    if(!ef)return;
+    const id=pid||aid;
+    if(seen.has(id))return;
     seen.add(id);
+    rivals.push({id,accountId:aid,ef,avatar:a.avatar||player?.avatar||'',wa:a.wa||player?.wa||'',tg:a.tg||player?.tg||''});
   });
 
-  let rivalId = String(account.rivalPlayerId || '');
-  const selectedRival = rivals.find(
-    r => String(r.id) === rivalId
-  );
-
-  if (rivalId && !selectedRival) {
-    rivalId = '';
-    account.rivalPlayerId = '';
-    localStorage.setItem(KEY, JSON.stringify(state));
+  const savedMap=state.rivalSelections&&typeof state.rivalSelections==='object'?state.rivalSelections:{};
+  let rivalId=String(savedMap[String(account.authUserId||account.id||'')]||memberWorkflow.session?.rivalPlayerId||'');
+  const selectedRival=rivals.find(r=>String(r.id)===rivalId)||null;
+  if(!selectedRival)rivalId='';
+  if(sel){
+    sel.innerHTML=`<option value="">${escMW((state.settings&&state.settings.profileRivalNoneText)||'No Have Rival')}</option>`+
+      rivals.map(r=>`<option value="${escMW(r.id)}">${escMW(r.ef)}</option>`).join('');
+    sel.value=rivalId;
   }
-
-  if (sel) {
-    sel.innerHTML =
-      `<option value="">${escMW(
-        (state.settings && state.settings.profileRivalNoneText)
-        || 'No Have Rival'
-      )}</option>` +
-      rivals.map(r =>
-        `<option value="${escMW(r.id)}">${escMW(r.ef)}</option>`
-      ).join('');
-
-    sel.value = rivalId;
+  if(!selectedRival){empty?.classList.remove('hidden');box?.classList.add('hidden');return;}
+  empty?.classList.add('hidden');box?.classList.remove('hidden');
+  const av=document.getElementById('myRivalAvatar');if(av)av.src=selectedRival.avatar||'logo.png';
+  const nm=document.getElementById('myRivalName');if(nm)nm.textContent=selectedRival.ef||'-';
+  const stats=rivalStatsMW(account,selectedRival.id);
+  for(const [id,val] of [['myRivalMatches',stats.matches.length],['myRivalWins',stats.w],['myRivalDraws',stats.d],['myRivalLosses',stats.l]]){const el=document.getElementById(id);if(el)el.textContent=val;}
+}
+async function saveRivalMW(){
+  const account=currentMemberAccountMW();
+  const rivalId=document.getElementById('rivalSelect')?.value||'';
+  if(!account)return;
+  if(rivalId&&String(rivalId)===String(account.playerId))return alert('Kamu tidak bisa memilih diri sendiri sebagai Rival.');
+  const deletedRivalUsernames = new Set(['dembele','asu@55','asu@555','asu@5555','aa1122']);
+  const chosen = (Array.isArray(state.memberAccounts)?state.memberAccounts:[])
+    .find(a=>String(a.playerId||a.id||'')===String(rivalId));
+  const chosenUsername = String(chosen?.ef||chosen?.username||'').trim().toLowerCase();
+  if(chosenUsername && deletedRivalUsernames.has(chosenUsername)){
+    return alert('Akun ini sudah dihapus Admin dan tidak boleh dipilih sebagai Rival.');
   }
-
-  const rival = selectedRival;
-
-  if (!rival) {
-    empty?.classList.remove('hidden');
-    box?.classList.add('hidden');
-    return;
-  }
-
-  empty?.classList.add('hidden');
-  box?.classList.remove('hidden');
-
-  const av = document.getElementById('myRivalAvatar');
-  if (av) av.src = rival.avatar || 'logo.png';
-
-  const nm = document.getElementById('myRivalName');
-  if (nm) nm.textContent = rival.ef || '-';
-
-  const st = rivalStatsMW(account, rival.id);
-
-  for (const [id, val] of [
-    ['myRivalMatches', st.matches.length],
-    ['myRivalWins', st.w],
-    ['myRivalDraws', st.d],
-    ['myRivalLosses', st.l]
-  ]) {
-    const el = document.getElementById(id);
-    if (el) el.textContent = val;
+  const key=String(account.authUserId||account.id||'');
+  const previous=memberWorkflow.session?.rivalPlayerId||'';
+  if(memberWorkflow.session)memberWorkflow.session.rivalPlayerId=rivalId;
+  saveMemberWorkflow();
+  try{
+    const {data:row,error:readError}=await supabaseClient.from('app_state').select('data').eq('id',1).single();
+    if(readError)throw readError;
+    const latest=row?.data&&typeof row.data==='object'?row.data:{};
+    const selections=latest.rivalSelections&&typeof latest.rivalSelections==='object'?{...latest.rivalSelections}:{};
+    if(rivalId)selections[key]=rivalId;else delete selections[key];
+    const merged={...latest,rivalSelections:selections};
+    const {error:updateError}=await supabaseClient.from('app_state').update({data:merged,updated_at:new Date().toISOString()}).eq('id',1);
+    if(updateError)throw updateError;
+    state={...state,...merged};state.dataInitialized=true;localStorage.setItem(KEY,JSON.stringify(state));
+    renderRivalMW();
+  }catch(e){
+    if(memberWorkflow.session)memberWorkflow.session.rivalPlayerId=previous;
+    saveMemberWorkflow();
+    console.error('saveRivalMW failed',e);
+    alert('Rival gagal disimpan ke server: '+(e?.message||e));
   }
 }
-function saveRivalMW(){const account=currentMemberAccountMW();const rivalId=document.getElementById('rivalSelect')?.value||'';if(!account)return;if(rivalId&&String(rivalId)===String(account.playerId))return alert('Kamu tidak bisa memilih diri sendiri sebagai Rival.');account.rivalPlayerId=rivalId;localStorage.setItem(KEY,JSON.stringify(state));renderRivalMW();}
-function removeRivalMW(){const account=currentMemberAccountMW();if(!account)return;account.rivalPlayerId='';localStorage.setItem(KEY,JSON.stringify(state));renderRivalMW();}
+async function removeRivalMW(){
+  const sel=document.getElementById('rivalSelect');if(sel)sel.value='';
+  await saveRivalMW();
+}
 function renderChangePasswordMW(){['currentPassword','newPassword','confirmPassword'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});const st=document.getElementById('changePasswordStatus');if(st)st.textContent='';}
 async function changePasswordMW(){const account=currentMemberAccountMW();if(!account)return openMemberAuth('login');const next=document.getElementById('newPassword')?.value||'',confirm=document.getElementById('confirmPassword')?.value||'',status=document.getElementById('changePasswordStatus');if(!next||!confirm){if(status)status.textContent='Lengkapi password baru.';return;}if(next.length<6){if(status)status.textContent='Password baru minimal 6 karakter.';return;}if(next!==confirm){if(status)status.textContent='Konfirmasi password tidak sama.';return;}if(status)status.textContent='Menyimpan password...';const {error}=await supabaseClient.auth.updateUser({password:next});if(error){if(status)status.textContent='Gagal mengubah password: '+error.message;return;}['currentPassword','newPassword','confirmPassword'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});if(status)status.textContent=(state.settings&&state.settings.profilePasswordSuccess)||'✓ Password berhasil diperbarui.';}
 function applyMemberTextSettingsMW(){const s=state.settings||{};const set=(id,v)=>{const el=document.getElementById(id);if(el&&v!=null)el.textContent=v};set('submitMatchTitleUi',s.submitMatchTitle||'Submit Match');set('submitMatchDescUi',s.submitMatchDesc||'Ajukan hasil pertandingan dan simpan semua report Anda di satu tempat.');set('submitMatchCardTitleUi',s.submitMatchTitle||'Submit Match (1Vs1 & Turnamen)');set('submitDateHelpUi',s.submitDateHelp||'The date must be in DD/MM/YYYY format : Example, 01/10/2026.');set('submitLeagueTitleUi',s.submitLeagueTitle||'🏆 Submit Match League');set('submitLeagueDescUi',s.submitLeagueDesc||'Hanya untuk member yang sudah terdaftar di League. Setiap lawan hanya dapat dimainkan 1x dalam periode League aktif.');set('submitHomeLockedHintUi',s.submitHomeLockedHint||'🔒 Terkunci sesuai eFootball Username yang sedang login.');set('leagueSubmitHomeLockedHintUi',s.submitHomeLockedHint||'🔒 Terkunci sesuai eFootball Username yang sedang login.');set('leagueMatchHistoryTitleUi',s.leagueMatchHistoryTitle||'📋 League Match Saya');set('leagueMatchHistoryDescUi',s.leagueMatchHistoryDesc||'Semua pengajuan pertandingan League Anda, dipisahkan berdasarkan status.');set('reportHistoryTitleUi',s.reportHistoryTitle||'📋 Report Saya');set('reportHistoryDescUi',s.reportHistoryDesc||'Boleh submit terus-menerus tanpa menunggu approval report sebelumnya.');set('closeMemberAuth',s.memberAuthCloseText||'Close');set('profileRivalTitleUi',s.profileRivalTitle||'⚔️ My Rival');set('profileRivalDescUi',s.profileRivalDesc||'Hanya satu rival yang bisa dipilih.');set('profileRivalSelectLabelUi',s.profileRivalSelectLabel||'Pilih Rival');set('myRivalBadgeUi',s.profileRivalBadge||'🟢 VERIFIED MEMBER');set('myRivalEmpty',s.profileRivalEmptyText||'Belum ada rival yang dipilih.');set('saveRivalBtn',s.profileRivalSaveButton||'Simpan Rival');set('profilePasswordTitleUi',s.profilePasswordTitle||'🔐 Change Password');set('profilePasswordDescUi',s.profilePasswordDesc||'Ganti password akun member yang sedang login.');set('profileCurrentPasswordLabelUi',s.profileCurrentPasswordLabel||'Current Password');set('profileNewPasswordLabelUi',s.profileNewPasswordLabel||'New Password');set('profileConfirmPasswordLabelUi',s.profileConfirmPasswordLabel||'Confirm New Password');set('changePasswordBtn',s.profilePasswordButton||'Ubah Password');set('profileTitleUi',s.profileTitle||'Profile Member');set('profileDescUi',s.profileDesc||'Informasi akun member yang sedang login.');set('profileUsernameLabelUi',s.profileUsernameLabel||'eFootball Username');set('profileWaLabelUi',s.profileWaLabel||'WhatsApp');set('profileTgLabelUi',s.profileTgLabel||'Telegram');set('profileLeagueLabelUi',s.profileLeagueLabel||'League');set('profileStatusLabelUi',s.profileStatusLabel||'Account Status');set('profileNoteUi',s.profileNote||'🔒 Data profil ini mengikuti akun member yang login. Username eFootball tidak dapat diubah dari sini.');set('authTitleUi',s.authTitle||'Member Access');set('authDescUi',s.authDesc||'Login untuk membuka Submit Match dan Profile Member.');set('loginUsernameLabelUi',s.loginUsernameLabel||'eFootball Username');set('loginPasswordLabelUi',s.loginPasswordLabel||'Password');const lu=document.getElementById('loginUsername');if(lu)lu.placeholder=s.loginUsernamePlaceholder||'username eFootball';const lp=document.getElementById('loginPassword');if(lp)lp.placeholder=s.loginPasswordPlaceholder||'password';set('loginHintUi',s.loginHint||'Member lama tidak perlu register ulang. Jika belum punya password login, admin dapat melakukan Reset Password dari Manage Members.');set('registerUsernameLabelUi',s.registerUsernameLabel||'eFootball Username *');const ru=document.getElementById('regUsername');if(ru)ru.placeholder=s.registerUsernamePlaceholder||'';set('registerPasswordLabelUi',s.registerPasswordLabel||'Password *');const rp=document.getElementById('regPassword');if(rp)rp.placeholder=s.registerPasswordPlaceholder||'';set('registerWaLabelUi',s.registerWaLabel||'WhatsApp *');const rw=document.getElementById('regWa');if(rw)rw.placeholder=s.registerWaPlaceholder||'';set('registerTgLabelUi',s.registerTgLabel||'Telegram (optional)');const rt=document.getElementById('regTg');if(rt)rt.placeholder=s.registerTgPlaceholder||'';set('registerPhotoLabelUi',s.registerPhotoLabel||'Profile Photo *');set('registerMemberBtn',s.registerButton||'Ajukan Pendaftaran');set('registerApprovalMessageUi',s.registerApprovalMessage||'Pendaftaran masuk ke Approval Member. Anda harus sudah bergabung di komunitas WhatsApp sebelum admin menyetujui.');const link=document.getElementById('registerWhatsappLinkUi');if(link){link.textContent=s.registerWhatsappLinkText||'👉 Join Komunitas WhatsApp';link.href=s.registerWhatsappLinkUrl||'#';link.style.display=s.registerWhatsappLinkUrl?'inline':'none';}}
