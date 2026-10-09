@@ -1181,31 +1181,97 @@ function renderRivalMW(){
     if(pid)seen.add('p:'+pid);
   });
 
-  // Fallback: player yang memang ada di daftar member tetapi belum punya account row.
-  players.forEach(p=>{
-    const pid=String(p.id||'');
-    if(!pid || pid===mePlayerId || seen.has('p:'+pid))return;
-    if(!p.ef)return;
-    rivals.push({id:pid,accountId:'',ef:p.ef,avatar:p.avatar||'',wa:p.wa||'',tg:p.tg||''});
-    seen.add('p:'+pid);
+  // Rival list hanya dari akun member yang aktif.
+  const accounts = (state.memberAccounts || []).filter(
+    a => a && a.status === 'active'
+  );
+  const meAccountId = String(account.id || '');
+  const mePlayerId = String(account.playerId || '');
+  const players = Array.isArray(state.players) ? state.players : [];
+  const byPlayerId = new Map(
+    players.map(p => [String(p.id), p])
+  );
+  const rivals = [];
+  const seen = new Set();
+
+  accounts.forEach(a => {
+    const aid = String(a.id || '');
+    const pid = String(a.playerId || '');
+
+    if (!aid || aid === meAccountId) return;
+    if (pid && pid === mePlayerId) return;
+
+    const p = byPlayerId.get(pid);
+    const ef = String(a.ef || p?.ef || '').trim();
+    if (!ef) return;
+
+    const id = pid || aid;
+    if (seen.has(id)) return;
+
+    rivals.push({
+      id,
+      accountId: aid,
+      ef,
+      avatar: a.avatar || p?.avatar || '',
+      wa: a.wa || p?.wa || '',
+      tg: a.tg || p?.tg || ''
+    });
+
+    seen.add(id);
   });
 
-  if(sel){
-    sel.innerHTML=`<option value="">${escMW((state.settings&&state.settings.profileRivalNoneText)||'No Have Rival')}</option>`+rivals.map(p=>`<option value="${escMW(p.id)}">${escMW(p.ef)}</option>`).join('');
-    sel.value=rivalId;
+  let rivalId = String(account.rivalPlayerId || '');
+  const selectedRival = rivals.find(
+    r => String(r.id) === rivalId
+  );
+
+  if (rivalId && !selectedRival) {
+    rivalId = '';
+    account.rivalPlayerId = '';
+    localStorage.setItem(KEY, JSON.stringify(state));
   }
 
-  let rival=players.find(p=>String(p.id)===String(rivalId));
-  if(!rival&&rivalId){
-    const ra=rivals.find(r=>String(r.id)===String(rivalId));
-    if(ra)rival={id:ra.id,ef:ra.ef,avatar:ra.avatar||''};
+  if (sel) {
+    sel.innerHTML =
+      `<option value="">${escMW(
+        (state.settings && state.settings.profileRivalNoneText)
+        || 'No Have Rival'
+      )}</option>` +
+      rivals.map(r =>
+        `<option value="${escMW(r.id)}">${escMW(r.ef)}</option>`
+      ).join('');
+
+    sel.value = rivalId;
   }
-  if(!rival||!rival.ef){empty?.classList.remove('hidden');box?.classList.add('hidden');return;}
-  empty?.classList.add('hidden');box?.classList.remove('hidden');
-  const av=document.getElementById('myRivalAvatar');if(av)av.src=rival.avatar||'logo.png';
-  const nm=document.getElementById('myRivalName');if(nm)nm.textContent=rival.ef||'-';
-  const st=rivalStatsMW(account,rival.id);
-  for(const [id,val] of [['myRivalMatches',st.matches.length],['myRivalWins',st.w],['myRivalDraws',st.d],['myRivalLosses',st.l]]){const el=document.getElementById(id);if(el)el.textContent=val;}
+
+  const rival = selectedRival;
+
+  if (!rival) {
+    empty?.classList.remove('hidden');
+    box?.classList.add('hidden');
+    return;
+  }
+
+  empty?.classList.add('hidden');
+  box?.classList.remove('hidden');
+
+  const av = document.getElementById('myRivalAvatar');
+  if (av) av.src = rival.avatar || 'logo.png';
+
+  const nm = document.getElementById('myRivalName');
+  if (nm) nm.textContent = rival.ef || '-';
+
+  const st = rivalStatsMW(account, rival.id);
+
+  for (const [id, val] of [
+    ['myRivalMatches', st.matches.length],
+    ['myRivalWins', st.w],
+    ['myRivalDraws', st.d],
+    ['myRivalLosses', st.l]
+  ]) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+  }
 }
 function saveRivalMW(){const account=currentMemberAccountMW();const rivalId=document.getElementById('rivalSelect')?.value||'';if(!account)return;if(rivalId&&String(rivalId)===String(account.playerId))return alert('Kamu tidak bisa memilih diri sendiri sebagai Rival.');account.rivalPlayerId=rivalId;localStorage.setItem(KEY,JSON.stringify(state));renderRivalMW();}
 function removeRivalMW(){const account=currentMemberAccountMW();if(!account)return;account.rivalPlayerId='';localStorage.setItem(KEY,JSON.stringify(state));renderRivalMW();}
