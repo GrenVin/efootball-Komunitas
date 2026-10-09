@@ -1149,37 +1149,7 @@ function rivalStatsMW(account, rivalPlayerId){const myPlayer=currentMemberPlayer
 function renderRivalMW(){
   const account=currentMemberAccountMW();
   if(!account)return;
-  const rivalId=account.rivalPlayerId||'';
   const empty=document.getElementById('myRivalEmpty'),box=document.getElementById('myRivalBox'),sel=document.getElementById('rivalSelect');
-
-  // Rival list = semua member yang SUDAH TERDAFTAR/AKTIF.
-  // Jangan bergantung pada playerId; akun yang sudah approved tetap harus muncul.
-  const accounts=(state.memberAccounts||[]).filter(a=>a&&a.status==='active');
-  const meAccountId=String(account.id||'');
-  const mePlayerId=String(account.playerId||'');
-  const players=Array.isArray(state.players)?state.players:[];
-  const byPlayerId=new Map(players.map(p=>[String(p.id),p]));
-  const rivals=[];
-  const seen=new Set();
-
-  accounts.forEach(a=>{
-    const aid=String(a.id||'');
-    const pid=String(a.playerId||'');
-    if(!aid || aid===meAccountId || (pid && pid===mePlayerId))return;
-    const ef=(a.ef||byPlayerId.get(pid)?.ef||'').trim();
-    if(!ef || seen.has(aid))return;
-    const p=byPlayerId.get(pid);
-    rivals.push({
-      id:pid||aid,
-      accountId:aid,
-      ef,
-      avatar:a.avatar||p?.avatar||'',
-      wa:a.wa||p?.wa||'',
-      tg:a.tg||p?.tg||''
-    });
-    seen.add(aid);
-    if(pid)seen.add('p:'+pid);
-  });
 
   // Rival list hanya dari akun member yang aktif.
   const accounts = (state.memberAccounts || []).filter(
