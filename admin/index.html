@@ -688,7 +688,31 @@ document.getElementById('closeEdit').addEventListener('click',closeEdit);documen
   const authUserId=p.accountId||linkedAccount?.id||'';
   if(ef!==oldEf && authUserId){
     try{
-      const {data,error}=await supabaseClient.functions.invoke('admin-update-member',{body:{userId:String(authUserId),username:ef}});
+      
+const { data: sessionData, error: sessionError } =
+  await supabaseClient.auth.getSession();
+
+if (sessionError) throw sessionError;
+
+const token = sessionData?.session?.access_token;
+
+if (!token) {
+  throw new Error('Sesi Admin tidak ditemukan. Silakan login kembali.');
+}
+
+const { data, error } = await supabaseClient.functions.invoke(
+  'admin-update-member',
+  {
+    body: {
+      userId: String(authUserId),
+      username: ef
+    },
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+);
+
       if(error)throw new Error(data?.error||error.message||'Gagal memperbarui akun login.');
       if(!data?.success)throw new Error(data?.error||'Backend tidak mengonfirmasi perubahan username.');
     }catch(err){p.avatar=oldAvatar;console.error('Update username/auth gagal',err);alert('Username belum diubah karena akun login Supabase gagal diperbarui.\n'+(err?.message||err)+'\nDeploy Edge Function admin-update-member dari folder supabase/functions di ZIP terlebih dahulu.');return;}
