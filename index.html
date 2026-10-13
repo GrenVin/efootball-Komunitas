@@ -231,7 +231,7 @@ main{min-width:0 !important;}
 .rankNum{font-size:1.15em;font-weight:900;line-height:1}
 .rankMove{display:inline-block;margin-left:5px;font-size:.68em;font-weight:800;line-height:1;vertical-align:middle;opacity:.9}
 .rankMove.up{color:#64e6a5}.rankMove.down{color:#ff7d87}.rankMove.same{color:#8f9aa5}
-</style>
+ .t-placeholder{color:#89939e!important;opacity:.72;font-style:italic} </style>
 <style id="HOME-READABLE-DARK-BLUE">
 /* HOME ONLY: keep the original dark blue/silver dashboard theme, but make text and borders readable. */
 #home.panel{
@@ -981,9 +981,158 @@ main{min-width:0 !important;}
   .headerActions .badge,.headerActions .memberAuthBtn{height:38px;font-size:9.5px!important;border-radius:10px}
 }
 </style>
+<style id="efidTournamentStyles">
+/* Tournament module is namespaced to avoid changing existing member styles */
+#tournament.efidTournament{--t-bg:#061522;--t-panel:#081b29;--t-line:#1b394b;--t-cyan:#28d8f5;--t-green:#16e0b1;--t-muted:#91aebe;--t-gold:#ffc84a;color:#eef7ff}
+#tournament .t-wrap{padding:clamp(12px,2vw,24px);border:1px solid rgba(40,216,245,.18);border-radius:18px;background:linear-gradient(145deg,rgba(3,18,31,.97),rgba(4,26,39,.96));}
+#tournament .t-eyebrow{font-size:10px;letter-spacing:2px;color:var(--t-cyan);font-weight:900}
+#tournament .t-titleRow{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin:6px 0 8px}
+#tournament .t-title{font-size:clamp(24px,3vw,38px);line-height:1.08;font-weight:900;margin:0;letter-spacing:-.8px}
+#tournament .t-title span{color:var(--t-cyan)}
+#tournament .t-sub{font-size:13px;color:#a5bdca;margin:0 0 18px}
+#tournament .t-preview{border:1px solid #08795f;background:#062c29;color:#36efbd;border-radius:99px;padding:7px 11px;font-size:10px;font-weight:900;white-space:nowrap}
+#tournament .t-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:18px 0}
+#tournament .t-stat{background:linear-gradient(135deg,#0d2434,#0a1b29);border:1px solid #203c4d;border-radius:13px;padding:13px 14px;min-width:0}
+#tournament .t-stat small{display:block;color:#9bb7c8;font-size:9px;letter-spacing:1px;margin-bottom:7px}
+#tournament .t-stat strong{font-size:14px;display:block;overflow-wrap:anywhere}
+#tournament .t-seasonRow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:18px 0}
+#tournament .t-seasonArchive{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:20px 0;padding:16px 18px;border:1px solid rgba(40,216,245,.58);border-left:4px solid var(--t-cyan);border-radius:15px;background:linear-gradient(110deg,rgba(11,42,58,.98),rgba(5,25,39,.98));box-shadow:0 8px 24px rgba(0,0,0,.18)}
+#tournament .t-seasonArchiveIntro{display:flex;align-items:center;gap:12px;min-width:220px}.t-seasonArchiveIcon{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:rgba(40,216,245,.12);font-size:22px}.t-seasonArchiveIntro strong{display:block;color:#eaf8ff;font-size:13px;letter-spacing:1px}.t-seasonArchiveIntro small{display:block;color:#9bb7c8;font-size:11px;margin-top:5px}.t-seasonArchiveControls{display:grid;grid-template-columns:auto minmax(145px,210px);align-items:center;gap:6px 10px}.t-seasonArchiveControls label{font-size:9px;letter-spacing:1px;color:#8faebe;font-weight:900}.t-seasonArchiveControls select{grid-column:2;grid-row:1 / span 2;width:100%;min-width:0;padding:12px 35px 12px 13px;border:1px solid #25cce8;border-radius:10px;background:#0b2434;color:#eaf8ff;font-weight:800;font-size:12px;cursor:pointer}.t-seasonArchiveControls #tSeasonCaption{grid-column:1;grid-row:2;color:#32dff1;font-size:10px}.t-seasonArchiveControls label{grid-column:1;grid-row:1}
+@media(max-width:600px){#tournament .t-seasonArchive{align-items:stretch;padding:13px;gap:12px}.t-seasonArchiveControls{grid-template-columns:1fr minmax(130px,1.2fr)}.t-seasonArchiveIntro small{line-height:1.45}}
+#tournament .t-label{font-size:10px;color:#9db8c8;font-weight:900;letter-spacing:1.2px;margin-right:4px}
+#tournament .t-btn{cursor:pointer;border:1px solid #294b60;background:#0b2131;color:#b9ceda;border-radius:10px;padding:10px 13px;font-size:10px;font-weight:900;transition:.16s}
+#tournament .t-btn:hover{border-color:var(--t-cyan);color:#fff}
+#tournament .t-btn.active{background:linear-gradient(110deg,#13bce8,#12d9b1);color:#041522;border-color:transparent}
+#tournament .t-content{display:grid;grid-template-columns:minmax(0,1fr) 245px;gap:14px;align-items:start}
+#tournament .t-bracketPanel,#tournament .t-highlights{background:rgba(3,17,28,.78);border:1px solid #1a3546;border-radius:16px;min-width:0}
+#tournament .t-panelHead{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px;border-bottom:1px solid #1b3545}
+#tournament .t-panelHead h3{font-size:14px;margin:0}
+#tournament .t-archive{border:1px solid #087a98;color:var(--t-cyan);padding:6px 9px;border-radius:99px;font-size:9px;font-weight:900;white-space:nowrap}
+#tournament .t-bracketBody{padding:15px}
+#tournament .t-design{font-size:10px;color:var(--t-muted);margin-bottom:18px}
+#tournament .t-design b{color:var(--t-cyan);margin-left:6px}
+#tournament .t-bracket{display:grid;grid-template-columns:1.05fr 1fr .95fr .95fr;gap:14px;align-items:stretch}
+#tournament .t-round{min-width:0;display:flex;flex-direction:column}
+#tournament .t-roundTitle{font-size:9px;color:#8eaab9;font-weight:900;letter-spacing:1px;margin:0 0 12px;min-height:12px}
+#tournament .t-roundMatches{display:flex;flex-direction:column;justify-content:space-around;gap:12px;flex:1}
+#tournament .t-match{position:relative;border:1px solid #21485b;border-radius:12px;background:linear-gradient(140deg,#0b2537,#091c2b);padding:5px 9px;min-width:0;box-shadow:0 5px 15px rgba(0,0,0,.12)}
+#tournament .t-matchRow{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:24px;font-size:10px}
+#tournament .t-matchRow span:first-child{min-width:0;overflow-wrap:anywhere;white-space:normal;color:#b9ccd8;font-weight:700;line-height:1.35}
+#tournament .t-matchRow.t-placeholder span:first-child{color:#8fa9b8;font-weight:600}
+#tournament .t-matchRow.t-placeholder{min-height:23px}
+#tournament .t-matchRow.winner span:first-child{color:var(--t-green)}
+#tournament .t-score{font-weight:900;color:#9eb7c7;flex:none}
+#tournament .t-matchRow.winner .t-score{color:var(--t-green)}
+#tournament .t-match.champion{border-color:var(--t-gold);box-shadow:0 0 0 1px rgba(255,200,74,.12),0 0 20px rgba(255,200,74,.08)}
+#tournament .t-finalTitle{color:var(--t-gold)}
+#tournament .t-highlights{padding:15px}
+#tournament .t-highlights h3{font-size:13px;margin:0}
+#tournament .t-highlightItem{padding:14px 0;border-bottom:1px solid #1c3544}
+#tournament .t-highlightItem small{display:block;font-size:9px;color:#8eaab9;letter-spacing:1px;margin-bottom:6px}
+#tournament .t-highlightItem strong{font-size:15px}
+#tournament .t-championCard{margin-top:15px;border:1px solid rgba(255,200,74,.45);border-radius:13px;text-align:center;padding:17px 10px;background:linear-gradient(145deg,rgba(255,200,74,.1),rgba(8,27,41,.85))}
+#tournament .t-cup{font-size:30px;margin-bottom:8px}
+#tournament .t-championCard small{display:block;color:var(--t-gold);font-size:9px;letter-spacing:1px;font-weight:900}
+#tournament .t-championCard strong{display:block;color:var(--t-gold);font-size:20px;margin-top:6px}
+#tournament .t-mobileRounds{display:none}
+#tournament .t-mobileRoundList{display:grid;gap:9px}
+#tournament .t-mobileRoundList .t-match{padding:8px 11px}
+#tournament .t-mobileRoundList .t-matchRow{font-size:12px;min-height:28px;align-items:flex-start;padding:4px 0}
+#tournament .t-mobileRoundList .t-matchRow.t-placeholder span:first-child{color:#8fa9b8}
+#tournament .t-mobileRoundList .t-matchRow span:first-child{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;line-height:1.4}
+#tournament .t-mobileRoundList .t-matchRow .t-score{flex:0 0 auto}
+#tournament .t-roundMeta{font-size:10px;color:var(--t-muted);margin:0 0 10px}
+#tournament .t-seasonNote{font-size:10px;color:#8ca8b9;margin-top:13px}
+
+
+@media(max-width:1100px){
+ #tournament .t-content{grid-template-columns:minmax(0,1fr) 220px;gap:10px}
+ #tournament .t-bracket{gap:9px}
+ #tournament .t-match{padding:5px 6px}
+ #tournament .t-matchRow{font-size:9px}
+}
+@media(max-width:760px){
+ #tournament .t-wrap{padding:13px;border-radius:14px}
+ #tournament .t-content{grid-template-columns:1fr}
+ #tournament .t-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:14px 0}
+ #tournament .t-stat{padding:11px}
+ #tournament .t-stat strong{font-size:13px}
+ #tournament .t-seasonRow{gap:6px}
+ #tournament .t-seasonRow .t-label{width:100%;margin-bottom:3px}
+ #tournament .t-btn{padding:10px 11px}
+ #tournament .t-bracketPanel .t-bracketBody{padding:12px}
+ #tournament .t-bracket{display:none}
+ #tournament .t-mobileRounds{display:block}
+ #tournament .t-mobileRounds .t-roundTitle{display:none}
+ #tournament .t-panelHead{padding:13px}
+ #tournament .t-highlights{padding:13px}
+ #tournament .t-highlights h3{font-size:12px}
+ #tournament .t-highlightItem{padding:10px 0}
+ #tournament .t-highlightItem strong{font-size:14px}
+ #tournament .t-championCard{padding:13px}
+}
+/* Mobile Tournament layout v20: compact, reordered sections; desktop remains unchanged */
+@media(max-width:760px){
+ #tournament .t-wrap{display:flex;flex-direction:column;gap:0;padding:10px!important}
+ #tournament .t-eyebrow{order:1;font-size:9px;letter-spacing:1.5px;margin:0 2px 4px}
+ #tournament .t-titleRow{order:2;display:block;margin:0 2px 5px}
+ #tournament .t-title{font-size:clamp(23px,6.4vw,30px);line-height:1.03;letter-spacing:-.6px}
+ #tournament .t-preview{display:inline-flex;margin-top:7px;padding:5px 8px;font-size:9px}
+ #tournament .t-sub{order:3;font-size:11px;line-height:1.4;margin:0 2px 10px}
+ #tournament .t-content{display:contents}
+ #tournament .t-seasonArchive{order:4;margin:0 0 10px!important;padding:10px!important;gap:9px!important;border-radius:12px;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+ #tournament .t-seasonArchiveIntro{min-width:0;gap:9px;align-items:center}
+ #tournament .t-seasonArchiveIcon{width:32px;height:32px;flex:0 0 32px;border-radius:9px;font-size:17px}
+ #tournament .t-seasonArchiveIntro strong{font-size:11px;letter-spacing:.8px}
+ #tournament .t-seasonArchiveIntro small{font-size:10px;line-height:1.25;margin-top:3px}
+ #tournament .t-seasonArchiveControls{width:100%;grid-template-columns:1fr!important;gap:4px!important}
+ #tournament .t-seasonArchiveControls label{grid-column:1!important;grid-row:auto!important;font-size:8px}
+ #tournament .t-seasonArchiveControls select{grid-column:1!important;grid-row:auto!important;height:38px;padding:8px 12px;font-size:11px}
+ #tournament .t-seasonArchiveControls #tSeasonCaption{grid-column:1!important;grid-row:auto!important;font-size:9px;line-height:1.25}
+ #tournament .t-highlights{order:5;padding:10px!important;margin:0 0 10px;border-radius:12px;background:linear-gradient(135deg,rgba(10,35,52,.98),rgba(6,21,34,.98));border-color:rgba(150,130,255,.35);box-shadow:inset 3px 0 0 rgba(150,130,255,.85)}
+ #tournament .t-highlights .t-panelHead{padding:0 0 7px!important;align-items:center}
+ #tournament .t-highlights h3{font-size:11px;letter-spacing:.25px}
+ #tournament .t-highlights .t-archive{padding:4px 7px;font-size:8px}
+ #tournament .t-highlightItem{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 0}
+ #tournament .t-highlightItem small{font-size:8px;margin:0;flex:0 0 88px}
+ #tournament .t-highlightItem strong{font-size:11px;text-align:right;overflow-wrap:anywhere}
+ #tournament .t-championCard{display:grid;grid-template-columns:32px 1fr;grid-template-rows:auto auto;align-items:center;column-gap:8px;margin-top:8px;padding:8px 10px;text-align:left;border-radius:10px}
+ #tournament .t-cup{grid-row:1 / span 2;font-size:23px;margin:0;text-align:center}
+ #tournament .t-championCard small{font-size:8px;letter-spacing:.8px}
+ #tournament .t-championCard strong{font-size:14px;margin-top:2px}
+ #tournament .t-stats{order:6;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:0 0 10px!important}
+ #tournament .t-stat{padding:8px 9px;border-radius:10px}
+ #tournament .t-stat small{font-size:8px;margin-bottom:3px;letter-spacing:.7px}
+ #tournament .t-stat strong{font-size:11px;line-height:1.25}
+ #tournament .t-submitPanel{order:7;margin:0 0 10px!important;padding:11px!important;gap:8px!important;border-radius:12px}
+ #tournament .t-submitPanel strong{font-size:12px}
+ #tournament .t-submitPanel p{font-size:10px;line-height:1.35;margin:4px 0 0}
+ #tournament .t-submitPanel>div:nth-child(2){width:100%;display:flex!important;flex-direction:column;align-items:stretch!important;gap:6px!important}
+ #tournament .t-submitPanel .t-btn{width:100%;min-height:36px;padding:9px 12px;font-size:9px}
+ #tournament #tournamentSubmitStatus{font-size:10px}
+ #tournament .t-bracketPanel{order:8;border-radius:12px}
+ #tournament .t-panelHead{padding:10px!important;gap:7px}
+ #tournament .t-panelHead h3{font-size:12px;line-height:1.25}
+ #tournament .t-panelHead .t-archive{padding:5px 7px;font-size:8px}
+ #tournament .t-bracketPanel .t-bracketBody{padding:10px!important}
+ #tournament .t-seasonRow{margin:0 0 9px!important;gap:5px!important}
+ #tournament .t-seasonRow .t-label{font-size:8px;margin-bottom:1px}
+ #tournament .t-seasonRow .t-btn{flex:1 1 auto;padding:8px 7px;font-size:8px;min-height:33px}
+ #tournament .t-roundMeta{font-size:9px;margin-bottom:7px}
+ #tournament .t-mobileRoundList{gap:7px}
+ #tournament .t-mobileRoundList .t-match{padding:6px 9px}
+ #tournament .t-mobileRoundList .t-matchRow{font-size:11px;min-height:24px;padding:2px 0}
+ #tournament .t-seasonNote{font-size:9px;line-height:1.35;margin-top:9px}
+}
+
+</style>
+
+<style id="efidTournamentSubmitStyle">.t-submitPanel{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px 18px;padding:16px 18px;margin:16px 0 18px;border:1px solid rgba(40,216,245,.38);border-left:4px solid #28d8f5;border-radius:14px;background:radial-gradient(circle at 100% 0,rgba(22,224,177,.10),transparent 38%),linear-gradient(135deg,#0b2635,#071621);box-shadow:0 8px 22px rgba(0,0,0,.16)}.t-submitPanel p{margin:5px 0 0;color:#9eb6c4;font-size:12px;line-height:1.5}.t-submitPanel>div:first-child strong{font-size:15px}.t-submitPanel #tournamentSubmitStatus{grid-column:1/-1;min-height:0}.t-submitPanel #tournamentSubmitStatus{font-size:12px;color:#6ee7d5}.t-submitPanel button{cursor:pointer}@media(max-width:700px){.t-submitPanel{grid-template-columns:minmax(0,1fr);padding:14px}.t-submitPanel>div:nth-child(2){display:grid!important;grid-template-columns:1fr}.t-submitPanel button{width:100%}.t-submitPanel #tournamentCancelBtn{text-align:center;justify-content:center;display:flex;align-items:center;white-space:normal;line-height:1.25}.t-submitPanel #tournamentSubmitStatus{grid-column:auto}}
+</style>
+
 </head><body><div class="wrap">
 <header class="hero"><div class="brand"><img id="siteLogo" class="logo" src="logo.png"><div class="brandText"><h1 id="siteTitle">eFootball <span>Community</span></h1><div id="siteSubtitle" class="sub">Rank Member Komunitas eFootball ID🇮🇩</div></div></div><div class="headerActions"><button id="memberAuthBtn" class="btn memberAuthBtn">🔐 LOGIN / REGISTER</button><div id="liveBadge" class="badge">🟢 LIVE COMMUNITY TABLE</div></div></header>
-<div class="layout"><aside class="sidebar"><button class="navbtn active" data-tab="home"><span class="navicon">🏠</span><span id="navHome">HOME</span></button><button class="navbtn" data-tab="ranking"><span class="navicon">🏆</span><span id="navRanking">RANKING</span></button><button class="navbtn" data-tab="league"><span class="navicon">🏆</span><span id="navLeague">LEAGUE</span></button><button class="navbtn" data-tab="players"><span class="navicon">👥</span><span id="navPlayers">PLAYER INFO</span></button><button class="navbtn hidden memberPrivateNav" id="submitMatchNav" data-tab="submitMatch"><span class="navicon">⚽</span><span>SUBMIT MATCH</span></button><button class="navbtn hidden memberPrivateNav" id="profileMemberNav" data-tab="profileMember"><span class="navicon">👤</span><span>PROFILE MEMBER</span></button><div class="sideFooter"><b id="footerTitle">eFootball Community</b><br><span id="footerText">Play · Compete · Grow Together</span></div></aside><main><section id="home" class="tab panel homeV6"><div class="homeV6Wrap">
+<div class="layout"><aside class="sidebar"><button class="navbtn active" data-tab="home"><span class="navicon">🏠</span><span id="navHome">HOME</span></button><button class="navbtn" data-tab="ranking"><span class="navicon">🏆</span><span id="navRanking">RANKING</span></button><button class="navbtn" data-tab="league"><span class="navicon">🏆</span><span id="navLeague">LEAGUE</span></button><button class="navbtn" data-tab="players"><span class="navicon">👥</span><span id="navPlayers">PLAYER INFO</span></button><button class="navbtn" data-tab="tournament"><span class="navicon">🎮</span><span>TOURNAMENT</span></button><button class="navbtn hidden memberPrivateNav" id="submitMatchNav" data-tab="submitMatch"><span class="navicon">⚽</span><span>SUBMIT MATCH</span></button><button class="navbtn hidden memberPrivateNav" id="profileMemberNav" data-tab="profileMember"><span class="navicon">👤</span><span>PROFILE MEMBER</span></button><div class="sideFooter"><b id="footerTitle">eFootball Community</b><br><span id="footerText">Play · Compete · Grow Together</span></div></aside><main><section id="home" class="tab panel homeV6"><div class="homeV6Wrap">
 <div class="homeV6Banner"><img id="homeWelcomeImage" src="stadium-bg.jpg" alt="Selamat datang"></div>
 <div class="homeV6Section homePowerTotal"><div class="homeV6Head"><h3 id="homeTop3TotalTitle">🏆 TOP RANKING POWER — TOTAL</h3><span>ALL TIME</span></div><div id="homeTop3Total" class="homeV6Top3"></div></div>
 <div class="homeV6Section homePowerMonthly"><div class="homeV6Head"><h3 id="homeTop3Title">🏆 TOP RANKING POWER — MONTHLY</h3><span id="homeTop3MonthLabel">CURRENT MONTH</span></div><div id="homeTop3" class="homeV6Top3"></div></div>
@@ -1061,6 +1210,7 @@ main{min-width:0 !important;}
       <div class="profileInfoBox"><span id="profileStatusLabelUi">Account Status</span><b id="profileMemberStatus">ACTIVE</b></div>
     </div>
     <div class="profileMemberNote" id="profileNoteUi">🔒 Data profil ini mengikuti akun member yang login. Username eFootball tidak dapat diubah dari sini.</div>
+    <div class="profileInfoBox" id="profileTournamentAchievements" style="margin-top:12px"><span>🏆 Tournament Achievements</span><b id="profileTournamentAchievementList">Belum ada kemenangan Tournament.</b></div>
   </div>
 
   <div class="profileMemberCard profileRivalCard">
@@ -1083,7 +1233,50 @@ main{min-width:0 !important;}
     </div>
     <div class="securityActions"><button class="btn primary" id="changePasswordBtn">Ubah Password</button><span id="changePasswordStatus" class="muted small"></span></div>
   </div>
-</section></section></main></div></div>
+</section></section><section id="tournament" class="tab panel hidden efidTournament" data-mobile-style="1">
+ <div class="t-wrap">
+  
+
+
+  <div class="t-eyebrow">eFOOTBALL ID COMMUNITY</div>
+  <div class="t-titleRow"><h2 class="t-title">TOURNAMENT</h2><span class="t-preview">● PREVIEW</span></div>
+  <p class="t-sub">Choose a season to view Brackets and Champions.</p>
+  <div class="t-submitPanel" id="tournamentSubmitPanel"><div><strong>JOIN THE TOURNAMENT</strong><p id="tournamentSubmitHint">Ready to compete? Daftar sekarang.</p></div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button type="button" class="t-btn active" id="tournamentSubmitBtn">SUBMIT TOURNAMENT</button><button type="button" class="t-btn" id="tournamentCancelBtn" style="display:none">CANCEL REGISTRATION</button></div><span id="tournamentSubmitStatus" aria-live="polite"></span></div>
+  <div class="t-stats">
+   <div class="t-stat"><small>SEASON</small><strong id="tStatSeason">Season 1</strong></div>
+   <div class="t-stat"><small>PARTICIPANT</small><strong>16 Player</strong></div>
+   <div class="t-stat"><small>FORMAT</small><strong>Knockout</strong></div>
+   <div class="t-stat"><small>TOTAL MATCH</small><strong>15 Match</strong></div>
+  </div>
+  <div class="t-seasonArchive" aria-label="Arsip Tournament">
+   <div class="t-seasonArchiveIntro"><span class="t-seasonArchiveIcon">🏆</span><div><strong>ARSIP SEASON</strong><small>Pilih season untuk melihat bracket dan juara terdahulu</small></div></div>
+   <div class="t-seasonArchiveControls"><label for="tSeasonSelect">PILIH SEASON</label><select id="tSeasonSelect" aria-label="Pilih season arsip"><option value="1">Season 1</option></select><span id="tSeasonCaption">Season 1 · Champions Archive</span></div>
+  </div>
+  <div class="t-content">
+   <div class="t-bracketPanel">
+    <div class="t-panelHead"><h3 id="tBracketTitle">🏆 Season 1 - Knockout Bracket</h3><span class="t-archive">◷ SEASON ARCHIVE</span></div>
+    <div class="t-bracketBody">
+     
+     <div class="t-bracket" id="tDesktopBracket"></div>
+     <div class="t-mobileRounds">
+      <div class="t-seasonRow" style="margin:0 0 13px"><span class="t-label">PILIH BABAK</span><button type="button" class="t-btn active" data-t-round="0">Round 16</button><button type="button" class="t-btn" data-t-round="1">Quarter Final</button><button type="button" class="t-btn" data-t-round="2">Semi Final</button><button type="button" class="t-btn" data-t-round="3">Final</button></div>
+      <p class="t-roundMeta" id="tMobileRoundMeta">Round of 16 · 8 pertandingan</p>
+      <div class="t-mobileRoundList" id="tMobileMatches"></div>
+     </div>
+     <p class="t-seasonNote" id="tSeasonNote">Arsip Season 1. Data bracket demo untuk pratinjau desain.</p>
+    </div>
+   </div>
+   <aside class="t-highlights">
+    <div class="t-panelHead" style="padding:0 0 12px;border:0"><h3>SEASON HIGHLIGHTS</h3><span class="t-archive">ARCHIVE</span></div>
+    <div class="t-championCompact"><span class="t-championTrophy">🏆</span><div><small>SEASON CHAMPION</small><strong id="tChampion">Grenvin</strong></div></div>
+    <div class="t-highlightItem"><small>🥈 RUNNER-UP</small><strong id="tRunner">Kasepsteel</strong></div>
+    <div class="t-highlightItem"><small>▦ SEASON</small><strong id="tSeasonName">Season 1 · Demo</strong></div>
+   </aside>
+  </div>
+ </div>
+</section>
+
+</main></div></div>
 <div id="memberAuthModal" class="modal hidden"><div class="modalBox authModalBox"><div class="row"><div><h2 style="margin:0" id="authTitleUi">Member Access</h2><div class="muted small" id="authDescUi">Login untuk membuka Submit Match dan Profile Member.</div></div><button class="btn" id="closeMemberAuth">Close</button></div>
   <div class="authTabs"><button class="authTab active" data-auth-tab="login">LOGIN</button><button class="authTab" data-auth-tab="register">REGISTER</button></div>
   <div id="authLoginPanel"><div class="authForm"><div class="field full"><label id="loginUsernameLabelUi">eFootball Username</label><input id="loginUsername" autocomplete="username" placeholder="username eFootball"></div><div class="field full"><label id="loginPasswordLabelUi">Password</label><input id="loginPassword" type="password" autocomplete="current-password"></div><button class="btn primary" id="loginMemberBtn">Login</button></div><div class="authHint" id="loginHintUi">Member lama tidak perlu register ulang. Jika belum punya password login, admin dapat melakukan Reset Password dari Manage Members.</div></div>
@@ -1537,7 +1730,7 @@ function renderPlayers(){
   document.querySelectorAll('.playerCardV2').forEach(c=>c.addEventListener('click',()=>openHistory(c.dataset.player)));
 }
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}function escAttr(s){return esc(s)}
-function openHistory(id){const p=player(id);if(!p)return;closeHistory();const opponents=state.players.filter(q=>q.id!==id&&state.matches.some(m=>(m.p1===id&&m.p2===q.id)||(m.p2===id&&m.p1===q.id)));let html='';opponents.forEach(o=>{const ms=state.matches.filter(m=>(m.p1===id&&m.p2===o.id)||(m.p2===id&&m.p1===o.id)).sort((a,b)=>a.id-b.id);html+=`<details class="matchGroup" open><summary>${esc(p.ef)} VS ${esc(o.ef)}</summary>`;ms.forEach(m=>{const s1=m.p1===id?m.s1:m.s2,s2=m.p1===id?m.s2:m.s1,o2=outcome(s1,s2);const tag=isLiga(m)?'{LIGA}':'{1VS1}';html+=`<div class="matchLine"><div>${esc(m.date)}</div><div><b>${tag} ${esc(p.ef)} VS ${esc(o.ef)}</b><br>SCORE ${s1} VS ${s2}</div><div><span class="pill ${o2}">${o2==='win'?'WIN':o2==='loss'?'LOSE':'DRAW'}</span></div></div>`});html+='</details>'});if(!html)html='<div class="notice">Belum ada pertandingan.</div>';document.getElementById('modalTitle').textContent=`${p.ef} — ${state.settings.historyTitle}`;document.getElementById('modalBody').innerHTML=html;document.getElementById('modal').classList.remove('hidden');document.body.style.overflow='hidden'}
+function openHistory(id){const p=player(id);if(!p)return;closeHistory();const opponents=state.players.filter(q=>q.id!==id&&state.matches.some(m=>(m.p1===id&&m.p2===q.id)||(m.p2===id&&m.p1===q.id)));let html='';opponents.forEach(o=>{const ms=state.matches.filter(m=>(m.p1===id&&m.p2===o.id)||(m.p2===id&&m.p1===o.id)).sort((a,b)=>a.id-b.id);html+=`<details class="matchGroup" open><summary>${esc(p.ef)} VS ${esc(o.ef)}</summary>`;ms.forEach(m=>{const s1=m.p1===id?m.s1:m.s2,s2=m.p1===id?m.s2:m.s1,o2=outcome(s1,s2);const tag=m.source==='TOUR'||m.type==='tournament'?'{TOUR}':(isLiga(m)?'{LIGA}':'{1VS1}');html+=`<div class="matchLine"><div>${esc(m.date)}</div><div><b>${tag} ${esc(p.ef)} VS ${esc(o.ef)}</b><br>SCORE ${s1} VS ${s2}</div><div><span class="pill ${o2}">${o2==='win'?'WIN':o2==='loss'?'LOSE':'DRAW'}</span></div></div>`});html+='</details>'});if(!html)html='<div class="notice">Belum ada pertandingan.</div>';document.getElementById('modalTitle').textContent=`${p.ef} — ${state.settings.historyTitle}`;document.getElementById('modalBody').innerHTML=html;document.getElementById('modal').classList.remove('hidden');document.body.style.overflow='hidden'}
 function closeHistory(){document.getElementById('modal').classList.add('hidden');document.body.style.overflow=''}
 function deletePlayer(id){const p=player(id);if(!confirm(`Hapus member ${p.ef}? Semua pertandingan member ini juga akan dihapus.`))return;state.players=state.players.filter(x=>x.id!==id);state.matches=state.matches.filter(m=>m.p1!==id&&m.p2!==id);save()}
 
@@ -1591,7 +1784,7 @@ function renderHome(){
       const aa=pa?.avatar||fallback,ab=pb?.avatar||fallback;
       const resultA=outcome(m.s1,m.s2),resultB=outcome(m.s2,m.s1);
       return `<article class="homeV6Match">
-        <div class="homeV6Side"><img src="${escAttr(aa)}" alt="${escAttr(a)}" onerror="this.onerror=null;this.src='${fallback}'"><div><b>${esc(a)}</b><small>${esc(m.date||'')}</small></div></div>
+        <div class="homeV6Side"><img src="${escAttr(aa)}" alt="${escAttr(a)}" onerror="this.onerror=null;this.src='${fallback}'"><div><b>${esc(a)}</b><small>${esc(m.date||'')}${m.source==='TOUR'?' · {TOUR}':''}</small></div></div>
         <strong class="homeV6Score"><em class="${resultA}">${m.s1}</em><i>−</i><em class="${resultB}">${m.s2}</em></strong>
         <div class="homeV6Side right"><div><b>${esc(b)}</b></div><img src="${escAttr(ab)}" alt="${escAttr(b)}" onerror="this.onerror=null;this.src='${fallback}'"></div>
       </article>`;
@@ -1853,6 +2046,233 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden){const mon
 #home.homeV6 .homeV6Info span{font-weight:900!important;letter-spacing:.02em!important;}
 @media(max-width:600px){#home.homeV6 .homeV6Head h3{font-size:12px!important;}}
 </style>
+<script id="efidTournamentLogic">
+(function(){
+ const seasons={
+  1:{champion:'Grenvin',runner:'Kasepsteel',rounds:[
+   [['Grenvin',2,'Kasepsteel',0],['RaflyID',2,'Zenn',0],['Mikael',2,'Drax',0],['Rizky07',2,'Naufal',0],['Arkan',2,'Frost',0],['DimasFC',2,'Vortex',0],['Adit',2,'Fikri',0],['RizkyPro',2,'RexaZ',0]],
+   [['Grenvin',2,'RaflyID',0],['Mikael',2,'Rizky07',0],['Arkan',2,'DimasFC',0],['Adit',2,'RizkyPro',0]],
+   [['Grenvin',2,'Mikael',0],['Arkan',2,'Adit',0]],
+   [['Grenvin',2,'Arkan',0]]
+  ]},
+  2:{champion:'Not Specified',runner:'Not Specified',rounds:[
+   [['Slot Available 1',2,'Slot Available 2',0],['Slot Available 3',1,'Slot Available 4',2],['Slot Available 5',2,'Slot Available 6',0],['Slot Available 7',0,'Slot Available 8',2],['Slot Available 9',2,'Slot Available 10',1],['Slot Available 11',2,'Slot Available 12',0],['Slot Available 13',1,'Slot Available 14',2],['Slot Available 15',2,'Slot Available 16',0]],
+   [['Slot Available 1',0,'Slot Available 4',0],['Slot Available 5',0,'Slot Available 8',0],['Slot Available 9',0,'Slot Available 11',0],['Slot Available 14',0,'Slot Available 15',0]],
+   [['Not Specified',0,'Not Specified',0],['Not Specified',0,'Not Specified',0]],
+   [['Not Specified',0,'Not Specified',0]]
+  ]},
+  3:{champion:'Not Specified',runner:'Not Specified',rounds:[
+   [['Slot Available 1',0,'Slot Available 2',0],['Slot Available 3',0,'Slot Available 4',0],['Slot Available 5',0,'Slot Available 6',0],['Slot Available 7',0,'Slot Available 8',0],['Slot Available 9',0,'Slot Available 10',0],['Slot Available 11',0,'Slot Available 12',0],['Slot Available 13',0,'Slot Available 14',0],['Slot Available 15',0,'Slot Available 16',0]],
+   [['Not Specified',0,'Not Specified',0],['Not Specified',0,'Not Specified',0],['Not Specified',0,'Not Specified',0],['Not Specified',0,'Not Specified',0]],
+   [['Not Specified',0,'Not Specified',0],['Not Specified',0,'Not Specified',0]],
+   [['Not Specified',0,'Not Specified',0]]
+  ]}
+ };
+ const roundNames=['ROUND OF 16','QUARTER-FINALS','SEMI-FINALS','GRAND FINAL'];
+ let season=Math.max(1,Number(localStorage.getItem('efid_tournament_active_season_v2')||1)), activeRound=0;
+ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ function matchHtml(m,final=false){
+  const va=Number(m[1]),vb=Number(m[3]),valid=Number.isFinite(va)&&Number.isFinite(vb)&&m[1]!=='—'&&m[3]!=='—';const a=valid&&va>vb,b=valid&&vb>va;
+  return `<div class="t-match ${final?'champion':''}"><div class="t-matchRow ${a?'winner':''} ${String(m[0]).match(/Win |Winner |Menunggu|Pemenang babak|Slots Available|R OF 16 |QUARTER-FINALS |SEMI-FINALS /)?'t-placeholder':''}"><span>${esc(m[0])}</span><span class="t-score">${esc(m[1])}</span></div><div class="t-matchRow ${b?'winner':''} ${String(m[2]).match(/Win |Winner |Menunggu|Pemenang babak|Slots Available|R OF 16 |QUARTER-FINALS |SEMI-FINALS /)?'t-placeholder':''}"><span>${esc(m[2])}</span><span class="t-score">${esc(m[3])}</span></div></div>`;
+ }
+ function render(){
+  const archived=seasons[season] || {champion:'Not Specified',runner:'Not Specified',rounds:[Array.from({length:8},(_,i)=>['Slot Available '+(i*2+1),'—','Slot Available '+(i*2+2),'—']),Array.from({length:4},(_,i)=>['Winner R16 '+(i*2+1),'—','Winner R16 '+(i*2+2),'—']),Array.from({length:2},(_,i)=>['Winner QF '+(i*2+1),'—','Winner QF '+(i*2+2),'—']),[['Winner SF 1','—','Winner SF 2','—']]]};
+  let d=archived;
+  try{const raw=localStorage.getItem('efid_tournament_test_v2_s'+season)||(season===1?localStorage.getItem('efid_tournament_test_v2'):null);if(raw){const live=JSON.parse(raw);if((!Array.isArray(live.bracket)||!live.bracket.length)&&Array.isArray(live.applications)){const approved=(live.applications||[]).filter(x=>x.status==='approved').slice(0,16);if(approved.length){live.bracket=[];for(let j=0;j<16;j+=2)live.bracket.push({a:approved[j]?.username||('Slot Available '+(j+1)),b:approved[j+1]?.username||('Slot Available '+(j+2)),round:'R16'});live.scores={};}}if(Array.isArray(live.bracket)&&live.bracket.length){const roundOrder=['R16','QF','SF','FINAL'];const grouped=roundOrder.map(r=>live.bracket.filter(m=>(m.round||'R16')===r).map(m=>{const ix=live.bracket.indexOf(m),sc=live.scores?.[ix]||{};return [m.a,sc.a===undefined?'—':sc.a,m.b,sc.b===undefined?'—':sc.b]}));while(grouped.length<4)grouped.push([]);
+      const sizes=[8,4,2,1];
+      const pairLabel=(roundIndex,matchIndex)=>{
+        const source=grouped[roundIndex]||[]; const m=source[matchIndex];
+        if(!m) return 'Slots Available';
+        const a=String(m[0]||'').trim(), b=String(m[2]||'').trim();
+        if(!a||!b||a==='Slots Available'||b==='Slots Available') return 'Slots Available';
+        return a+' / '+b;
+      };
+      grouped.forEach((round,ri)=>{
+        while(round.length<sizes[ri]) round.push(['Slots Available','—','Slots Available','—']);
+      });
+      const isPlaceholder=name=>!name || /^(Slots Available|Not Specified|Menunggu|Pemenang babak|Win\b|Winner\b)/i.test(String(name).trim());
+      // Keep later rounds compact: show only the winner of the feeder match,
+      // or a short winner placeholder until that match has a confirmed score.
+      grouped.forEach((round,ri)=>{
+        if(ri===0) return;
+        const sourceLabel=['','R16','QF','SF'][ri-1];
+        round.forEach((m,mi)=>{
+          [0,2].forEach((slot,side)=>{
+            const feederIndex=mi*2+side;
+            const feeder=grouped[ri-1]?.[feederIndex];
+            const winnerPlaceholder='Winner '+sourceLabel+' '+(feederIndex+1);
+            if(!feeder){m[slot]=winnerPlaceholder;return;}
+            const a=String(feeder[0]||'').trim(), b=String(feeder[2]||'').trim();
+            // Slots Available is reserved for unfilled Round of 16 slots only.
+            if(!a||!b||a==='Slots Available'||b==='Slots Available'||/^Not Specified$/i.test(a)||/^Not Specified$/i.test(b)){m[slot]=winnerPlaceholder;return;}
+            const sa=Number(feeder[1]), sb=Number(feeder[3]);
+            const scored=feeder[1]!=='—'&&feeder[3]!=='—'&&Number.isFinite(sa)&&Number.isFinite(sb)&&sa!==sb;
+            if(scored){m[slot]=sa>sb?a:b;}
+            else {m[slot]=winnerPlaceholder;}
+          });
+        });
+      });
+      const fm=live.bracket.find(m=>m.round==='FINAL'),fi=fm?live.bracket.indexOf(fm):-1,fs=fi>=0?(live.scores?.[fi]||{}):{};d={champion:fs.winner&&fs.winner!=='DRAW'?fs.winner:'Not Specified',runner:fs.winner&&fs.winner!=='DRAW'?(fs.winner===fm?.a?fm?.b:fm?.a):'Not Specified',rounds:grouped,live:true,status:live.status};}}}catch(_){}
+  const periodList=(()=>{try{return JSON.parse(localStorage.getItem('efid_tournament_periods_v2')||'[1,2,3]')}catch(_){return [1,2,3]}})();
+  const seasonSelect=document.getElementById('tSeasonSelect');if(seasonSelect){seasonSelect.innerHTML='';periodList.forEach(n=>{const o=document.createElement('option');o.value=String(n);o.textContent=localStorage.getItem('efid_tournament_period_label_v2_'+n)||('Season '+n);seasonSelect.appendChild(o)});seasonSelect.value=String(season);if(![...seasonSelect.options].some(o=>o.value===String(season))){const o=document.createElement('option');o.value=String(season);o.textContent='Season '+season;seasonSelect.appendChild(o);seasonSelect.value=String(season);}}
+  const periodName=localStorage.getItem('efid_tournament_period_label_v2_'+season)||('Season '+season);document.getElementById('tStatSeason').textContent=periodName;
+  document.getElementById('tBracketTitle').textContent='🏆 '+periodName+' - Knockout Bracket';
+  document.getElementById('tSeasonCaption').textContent=periodName+' · Champions Archive';
+  document.getElementById('tChampion').textContent=d.champion;
+  document.getElementById('tRunner').textContent=d.runner;
+  document.getElementById('tSeasonName').textContent=periodName+' · '+(d.live?'Live Tournament':(season===1?'Demo':'Preview'));
+  const championCard=document.getElementById('tChampionCard');if(championCard)championCard.textContent=d.champion;
+  document.getElementById('tSeasonNote').textContent=d.live?'Hasil live Tournament dari panel admin. Pengundian dan skor tampil dari data testing pada origin/browser yang sama.':'';
+  if(document.getElementById('tSeasonSelect'))document.getElementById('tSeasonSelect').value=String(season);
+  document.getElementById('tDesktopBracket').innerHTML=d.rounds.map((matches,i)=>`<div class="t-round"><div class="t-roundTitle ${i===3?'t-finalTitle':''}">${roundNames[i]}</div><div class="t-roundMatches">${matches.map(m=>matchHtml(m,i===3)).join('')}</div></div>`).join('');
+  document.querySelectorAll('[data-t-round]').forEach(b=>b.classList.toggle('active',Number(b.dataset.tRound)===activeRound));
+  document.getElementById('tMobileRoundMeta').textContent=roundNames[activeRound]+' · '+d.rounds[activeRound].length+' pertandingan';
+  document.getElementById('tMobileMatches').innerHTML=d.rounds[activeRound].map(m=>matchHtml(m,activeRound===3)).join('');
+ }
+ document.getElementById('tSeasonSelect')?.addEventListener('change',e=>{season=Number(e.target.value)||1;activeRound=0;render()});
+ window.addEventListener('storage',()=>{season=Math.max(1,Number(localStorage.getItem('efid_tournament_active_season_v2')||season));render()});window.addEventListener('efid-tournament-season-change',()=>{season=Math.max(1,Number(localStorage.getItem('efid_tournament_active_season_v2')||season));render()});
+ document.querySelectorAll('[data-t-round]').forEach(b=>b.addEventListener('click',()=>{activeRound=Number(b.dataset.tRound);render()}));
+ render();
+})();
+</script>
+
+<script id="efidTournamentRegistration">
+(()=>{const BASE='efid_tournament_test_v2',ACTIVE='efid_tournament_active_season_v2';const season=()=>Math.max(1,Number(localStorage.getItem(ACTIVE)||1));const KEY=()=>BASE+'_s'+season();const read=()=>{try{let raw=localStorage.getItem(KEY());if(!raw&&season()===1)raw=localStorage.getItem(BASE);return raw?JSON.parse(raw):{applications:[],bracket:[],scores:{},status:'open'}}catch(e){return {applications:[],bracket:[],scores:{},status:'open'}}};const save=x=>localStorage.setItem(KEY(),JSON.stringify(x));const $=id=>document.getElementById(id);function logged(){return !!(window.supabase&&window.supabase.auth&&window.__efidTournamentSession)}async function getUser(){try{const {data}=await supabaseClient.auth.getSession();return data?.session?.user||null}catch(e){return null}}async function refresh(){const u=await getUser(),d=read(),b=$('tournamentSubmitBtn'),cancel=$('tournamentCancelBtn'),st=$('tournamentSubmitStatus'),hint=$('tournamentSubmitHint');if(!b)return;const old=u&&d.applications.find(x=>x.userId===u.id);if(cancel)cancel.style.display=old&&['pending','approved'].includes(old.status)&&!d.bracket.length?'inline-flex':'none';if(!u){b.textContent='LOGIN UNTUK MENDAFTAR';st.textContent='';hint.textContent='Tournament bisa dilihat tanpa login. Login sebagai member untuk mengajukan pendaftaran.';b.disabled=false}else if(old){b.textContent=old.status==='approved'?'PENDAFTARAN DISETUJUI':old.status==='pending'?'REGISTRATION SUBMITTED':'DAFTAR KEMBALI';b.disabled=old.status!=='rejected';st.textContent=old.status==='pending'?'Pending Admin Approval':old.status==='approved'?'Slot kamu disetujui':old.status==='rejected'?'Pendaftaran ditolak':'';hint.textContent='Status pendaftaran kamu: '+old.status}else{b.textContent='SUBMIT TOURNAMENT';b.disabled=false;st.textContent='';hint.textContent='Register for the Tournament (Maximum 16 Players).'}}document.addEventListener('click',async e=>{if(e.target?.id!=='tournamentCancelBtn')return;const u=await getUser();if(!u){alert('Silakan login kembali.');return}const d=read(),ix=d.applications.findIndex(x=>x.userId===u.id);if(ix<0)return;if(d.bracket.length){alert('Tournament sudah dimulai; pendaftaran tidak bisa dibatalkan.');return}if(!confirm('Batalkan pendaftaran Tournament kamu?'))return;d.applications.splice(ix,1);save(d);refresh();alert('Pendaftaran Tournament berhasil dibatalkan.');});document.addEventListener('click',async e=>{if(e.target?.id!=='tournamentSubmitBtn')return;const u=await getUser();if(!u){const modal=$('memberAuthModal');if(modal){modal.classList.remove('hidden');const loginTab=document.querySelector('[data-auth-tab="login"]');loginTab?.click();}else{document.getElementById('memberAuthBtn')?.click();}return}let profile=null;try{const {data,error}=await supabaseClient.from('member_profiles').select('*').eq('id',u.id).maybeSingle();if(error){console.error('Tournament member verification query failed',error);alert('Gagal memeriksa status akun member. Pastikan profil member tersedia dan akses database aktif, lalu coba lagi.');return}profile=data}catch(err){console.error('Tournament member verification failed',err);alert('Gagal memeriksa status akun member. Pastikan profil member tersedia dan akses database aktif, lalu coba lagi.');return}if(!profile){alert('Akun login belum memiliki profil member. Silakan lengkapi pendaftaran member terlebih dahulu.');return}if(!['approved','active'].includes(String(profile.status||'').toLowerCase())){alert('Akun member belum disetujui admin. Pendaftaran Tournament hanya untuk member yang sudah disetujui.');return}const d=read();if(d.status!=='open'){alert('Pendaftaran Tournament sudah ditutup.');return}const existing=d.applications.find(x=>x.userId===u.id);if(existing&&existing.status!=='rejected'){alert('Kamu sudah mengajukan pendaftaran.');return}if(d.applications.filter(x=>x.status!=='rejected').length>=16){alert('Slot pendaftaran sudah penuh (16 pemain).');return}let username=u.user_metadata?.username||u.user_metadata?.full_name||u.email?.split('@')[0]||'Member';try{const {data:p}=await supabaseClient.from('member_profiles').select('*').eq('id',u.id).maybeSingle();username=p?.username||p?.display_name||username}catch(_){}if(existing){existing.username=username;existing.email=u.email||existing.email||'';existing.status='pending';existing.submittedAt=new Date().toISOString();delete existing.rejectedAt}else{d.applications.push({userId:u.id,username,email:u.email||'',status:'pending',submittedAt:new Date().toISOString()})}save(d);refresh();const periodName=localStorage.getItem('efid_tournament_period_label_v2_'+season())||('Season '+season());alert('Pengajuan Tournament '+periodName+' berhasil diajukan kembali. Menunggu approval admin.');});document.addEventListener('DOMContentLoaded',()=>{refresh();document.addEventListener('click',e=>{if(e.target.closest('[data-tab="tournament"]'))refresh()})});window.addEventListener('storage',refresh);window.addEventListener('efid-tournament-season-change',refresh);})();
+</script>
+
+
+<style id="tournamentSimpleFinalStyle">
+#tournament .t-submitPanel{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 14px;margin:12px 0;border:1px solid rgba(40,216,245,.28);border-radius:10px;background:linear-gradient(135deg,#0b2635,#071621);box-shadow:none}
+#tournament .t-submitPanel>div:first-child{min-width:0;flex:1}
+#tournament .t-submitPanel>div:first-child strong{font-size:13px;letter-spacing:.3px}
+#tournament .t-submitPanel p{font-size:11px;line-height:1.35;margin:3px 0 0}
+#tournament .t-submitPanel>div:nth-child(2){flex:0 0 auto;display:flex!important;gap:7px!important;align-items:center}
+#tournament .t-submitPanel .t-btn{min-height:36px;padding:9px 15px;font-size:10px;white-space:nowrap}
+#tournament .t-submitPanel #tournamentSubmitStatus{flex-basis:100%;font-size:11px}
+@media(max-width:760px){
+ #tournament .t-seasonArchive{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;padding:9px 10px!important}
+ #tournament .t-seasonArchiveIntro{flex:0 1 43%;gap:6px!important}
+ #tournament .t-seasonArchiveIcon{display:none!important}
+ #tournament .t-seasonArchiveIntro small{display:none!important}
+ #tournament .t-seasonArchiveControls{flex:1 1 57%;width:auto!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:6px!important}
+ #tournament .t-seasonArchiveControls label{display:none!important}
+ #tournament .t-seasonArchiveControls select{width:100%;min-width:0;height:36px!important}
+ #tournament .t-seasonArchiveControls #tSeasonCaption{display:none!important}
+ #tournament .t-stats{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:4px!important}
+ #tournament .t-stat{min-width:0;padding:7px 5px!important;text-align:center}
+ #tournament .t-stat small{font-size:7px!important;letter-spacing:0!important;white-space:normal}
+ #tournament .t-stat strong{font-size:9px!important;overflow-wrap:anywhere}
+ #tournament .t-submitPanel{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:8px!important;padding:10px!important}
+ #tournament .t-submitPanel>div:first-child strong{font-size:12px!important}
+ #tournament .t-submitPanel p{font-size:10px!important}
+ #tournament .t-submitPanel>div:nth-child(2){width:100%;display:flex!important;flex-direction:column!important;align-items:stretch!important}
+ #tournament .t-submitPanel .t-btn{width:100%;min-height:35px}
+ #tournament .t-submitPanel #tournamentCancelBtn[style*="inline"]{width:100%}
+}
+</style>
+
+<style id="tournamentFinalRepair">
+/* Stable archive row on desktop and mobile */
+#tournament .t-seasonArchive{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;min-width:0!important;padding:10px 13px!important}
+#tournament .t-seasonArchiveIntro{display:flex!important;flex:1 1 auto!important;min-width:0!important;align-items:center!important}
+#tournament .t-seasonArchiveIntro strong{white-space:nowrap!important}
+#tournament .t-seasonArchiveIntro small{display:none!important}
+#tournament .t-seasonArchiveControls{display:flex!important;flex:0 1 250px!important;width:auto!important;min-width:0!important;align-items:center!important;justify-content:flex-end!important}
+#tournament .t-seasonArchiveControls label,#tournament .t-seasonArchiveControls #tSeasonCaption{display:none!important}
+#tournament .t-seasonArchiveControls select{width:100%!important;min-width:0!important;height:38px!important}
+/* Registration panel: avoid narrow vertical wrapping on desktop */
+#tournament .t-submitPanel{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important;justify-content:initial!important;gap:8px 18px!important;padding:16px 18px!important;min-height:0!important;box-sizing:border-box!important;width:100%!important}
+#tournament .t-submitPanel>div:first-child{display:block!important;min-width:0!important;width:auto!important;flex:initial!important}
+#tournament .t-submitPanel>div:first-child strong{display:block!important;white-space:normal!important;overflow-wrap:normal!important;word-break:normal!important;writing-mode:horizontal-tb!important;font-size:14px!important;line-height:1.35!important}
+#tournament .t-submitPanel p{white-space:normal!important;overflow-wrap:normal!important;word-break:normal!important;line-height:1.45!important}
+#tournament .t-submitPanel>div:nth-child(2){display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-end!important;flex-wrap:wrap!important;width:auto!important;min-width:0!important;flex:0 0 auto!important}
+#tournament .t-submitPanel .t-btn{width:auto!important;min-width:145px!important;white-space:nowrap!important;min-height:38px!important}
+#tournament .t-submitPanel #tournamentSubmitStatus{grid-column:1/-1!important;flex-basis:auto!important}
+/* Keep bracket visible on desktop; mobile uses round selector */
+#tournament .t-bracket{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:10px!important;min-width:0!important}
+#tournament .t-bracket .t-round{min-width:0!important}
+#tournament .t-bracket .t-match{min-width:0!important}
+#tournament .t-bracket .t-matchRow span:first-child{min-width:0!important;overflow-wrap:anywhere!important}
+#tournament .t-championCompact{display:flex;align-items:center;gap:10px;margin:4px 0 10px;padding:10px 12px;border:1px solid rgba(255,200,74,.55);border-radius:11px;background:linear-gradient(135deg,rgba(255,200,74,.11),rgba(7,22,33,.9))}
+#tournament .t-championTrophy{font-size:24px;line-height:1}
+#tournament .t-championCompact div{display:flex;flex-direction:column;gap:3px;min-width:0}
+#tournament .t-championCompact small{font-size:8px;font-weight:900;letter-spacing:.7px;color:#ffc84a}
+#tournament .t-championCompact strong{font-size:13px;color:#ffc84a;overflow-wrap:anywhere}
+@media(max-width:760px){
+ #tournament .t-seasonArchive{gap:8px!important;padding:9px 10px!important}
+ #tournament .t-seasonArchiveIntro{flex:0 1 43%!important}
+ #tournament .t-seasonArchiveIcon{display:none!important}
+ #tournament .t-seasonArchiveControls{flex:1 1 57%!important;min-width:0!important}
+ #tournament .t-seasonArchiveControls select{font-size:11px!important;height:36px!important;padding:0 8px!important}
+ #tournament .t-submitPanel{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:8px!important;padding:11px!important}
+ #tournament .t-submitPanel>div:first-child{width:100%!important}
+ #tournament .t-submitPanel>div:nth-child(2){width:100%!important;display:flex!important;flex-direction:column!important;align-items:stretch!important}
+ #tournament .t-submitPanel .t-btn{width:100%!important;min-width:0!important;white-space:normal!important}
+ #tournament .t-bracket{display:none!important}
+ #tournament .t-mobileRounds{display:block!important}
+ #tournament .t-championCompact{margin:3px 0 8px;padding:8px 10px}
+ #tournament .t-championTrophy{font-size:20px}
+ #tournament .t-championCompact strong{font-size:12px}
+}
+</style>
+
+<script id="tournament-results-integration-v33">
+(function(){
+  const TOUR_BASE='efid_tournament_test_v2', TOUR_ACTIVE='efid_tournament_active_season_v2';
+  const keyFor=n=>TOUR_BASE+'_s'+n;
+  const safeRead=k=>{try{return JSON.parse(localStorage.getItem(k)||'null')}catch(_){return null}};
+  const fmtDate=d=>{const x=d?new Date(d):new Date();if(Number.isNaN(x.getTime()))return '';return String(x.getDate()).padStart(2,'0')+'/'+String(x.getMonth()+1).padStart(2,'0')+'/'+x.getFullYear()};
+  function collectTourMatches(){
+    const active=Math.max(1,Number(localStorage.getItem(TOUR_ACTIVE)||1));
+    const nums=new Set([active]);
+    for(let n=1;n<=100;n++)if(localStorage.getItem(keyFor(n))|| (n===1&&localStorage.getItem(TOUR_BASE)))nums.add(n);
+    const out=[];
+    nums.forEach(season=>{
+      let d=safeRead(keyFor(season));if(!d&&season===1)d=safeRead(TOUR_BASE);if(!d||!Array.isArray(d.bracket))return;
+      d.bracket.forEach((m,i)=>{
+        const sc=d.scores&&d.scores[i]; if(!sc||!Number.isFinite(Number(sc.a))||!Number.isFinite(Number(sc.b)))return;
+        const a=String(m.a||'').trim(),b=String(m.b||'').trim();if(!a||!b||/^Slot Available/i.test(a)||/^Slot Available/i.test(b))return;
+        const pa=state.players.find(p=>String(p.ef||'').trim().toLowerCase()===a.toLowerCase());
+        const pb=state.players.find(p=>String(p.ef||'').trim().toLowerCase()===b.toLowerCase());if(!pa||!pb||pa.id===pb.id)return;
+        out.push({id:'TOUR-'+season+'-'+i,p1:pa.id,p2:pb.id,s1:Number(sc.a),s2:Number(sc.b),date:fmtDate(sc.recordedAt||sc.completedAt),source:'TOUR',type:'tournament',tournamentSeason:season,tournamentRound:m.round||'R16'});
+      });
+    });
+    return out;
+  }
+  function syncTourMatches(){
+    if(typeof state==='undefined'||!Array.isArray(state.matches)||!Array.isArray(state.players))return;
+    const regular=state.matches.filter(m=>m.source!=='TOUR'&&!String(m.id||'').startsWith('TOUR-'));
+    const tours=collectTourMatches();
+    state.matches=regular.concat(tours);
+  }
+  function renderAchievements(){
+    const el=document.getElementById('profileTournamentAchievementList');if(!el)return;
+    const account=typeof currentMemberAccountMW==='function'?currentMemberAccountMW():null;
+    const p=account&&state.players.find(x=>x.id===(account.playerId||account.id));
+    if(!p){el.textContent='Login untuk melihat achievement.';return;}
+    const active=Math.max(1,Number(localStorage.getItem(TOUR_ACTIVE)||1)),nums=new Set([active]);
+    for(let n=1;n<=100;n++)if(localStorage.getItem(keyFor(n))||(n===1&&localStorage.getItem(TOUR_BASE)))nums.add(n);
+    const wins=[];
+    nums.forEach(n=>{let d=safeRead(keyFor(n));if(!d&&n===1)d=safeRead(TOUR_BASE);if(!d||!Array.isArray(d.bracket))return;
+      const finalIndex=d.bracket.findIndex(m=>(m.round||'R16')==='FINAL');if(finalIndex<0)return;
+      const m=d.bracket[finalIndex],sc=d.scores&&d.scores[finalIndex];if(!sc||sc.winner==='DRAW'||!sc.winner)return;
+      if(String(sc.winner).toLowerCase()===String(p.ef).toLowerCase())wins.push(localStorage.getItem('efid_tournament_period_label_v2_'+n)||('Season '+n));
+    });
+    el.textContent=wins.length?wins.map((x,i)=>'🏆 Tournament Champion — '+x).join(' · '):'Belum ada kemenangan Tournament.';
+  }
+  if(typeof renderAll==='function'){const oldRenderAll=renderAll;renderAll=function(){syncTourMatches();oldRenderAll();renderAchievements();};}
+  if(typeof renderPlayers==='function'){const oldRenderPlayers=renderPlayers;renderPlayers=function(){syncTourMatches();oldRenderPlayers();};}
+  /* H2H FIX: re-sync tournament results at the exact moment Player Info history is opened.
+     Initial data loading can replace state.matches after the first page render; syncing only
+     during renderAll/renderPlayers can therefore leave tournament results missing in H2H. */
+  if(typeof openHistory==='function'){const oldOpenHistory=openHistory;const oldRenderPlayersForTour=typeof renderPlayers==='function'?renderPlayers:null;openHistory=function(id){syncTourMatches();if(oldRenderPlayersForTour)oldRenderPlayersForTour();oldOpenHistory(id);};}
+  if(typeof refreshMemberAreaMW==='function'){const oldRefresh=refreshMemberAreaMW;refreshMemberAreaMW=function(){oldRefresh();renderAchievements();};}
+  window.addEventListener('storage',e=>{if(e.key&&(e.key.startsWith(TOUR_BASE)||e.key===TOUR_ACTIVE)){syncTourMatches();if(typeof renderAll==='function')renderAll();renderAchievements();}});
+  document.addEventListener('DOMContentLoaded',()=>{syncTourMatches();renderAchievements();});
+  syncTourMatches();if(typeof renderAll==='function')renderAll();renderAchievements();
+})();
+</script>
+
 </body></html>
 
 <style id="HOME-MONTHLY-SECONDARY-V2">
@@ -1891,5 +2311,44 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden){const mon
 /* Ranking page: add a little breathing room between Period Rank and the table. */
 #ranking .table-wrap{margin-top:14px!important;}
 @media(max-width:720px){#ranking .table-wrap{margin-top:12px!important;}}
+
+/* v22 responsive tournament layout refinements */
+#tournament .t-seasonArchive{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;gap:14px!important;padding:12px 16px!important;}
+#tournament .t-seasonArchiveIntro{display:flex!important;flex:1 1 auto!important;min-width:0!important;}
+#tournament .t-seasonArchiveIntro small{display:none!important;}
+#tournament .t-seasonArchiveControls{display:flex!important;flex:0 1 260px!important;width:auto!important;min-width:190px!important;align-items:center!important;justify-content:flex-end!important;}
+#tournament .t-seasonArchiveControls label{display:none!important;}
+#tournament .t-seasonArchiveControls select{width:100%!important;min-width:0!important;}
+#tournament .t-seasonArchiveControls #tSeasonCaption{display:none!important;}
+#tournament .t-submitPanel{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;gap:18px!important;padding:18px 20px!important;min-height:104px!important;}
+#tournament .t-submitPanel>div:first-child{flex:1 1 auto!important;min-width:0!important;}
+#tournament .t-submitPanel>div:first-child strong{display:block!important;font-size:15px!important;line-height:1.3!important;white-space:normal!important;overflow-wrap:anywhere!important;}
+#tournament .t-submitPanel p{margin:5px 0 0!important;font-size:12px!important;line-height:1.45!important;}
+#tournament .t-submitPanel>div:nth-child(2){flex:0 0 auto!important;width:auto!important;display:flex!important;flex-direction:row!important;align-items:center!important;}
+#tournament .t-submitPanel .t-btn{width:auto!important;min-width:150px!important;min-height:40px!important;white-space:normal!important;}
+#tournament #tournamentSubmitStatus{flex:0 0 100%!important;}
+#tournament .t-highlights .t-highlightItem:first-of-type strong{color:var(--t-gold,#ffc84a)!important;font-size:17px!important;}
+#tournament .t-highlights .t-highlightItem{padding:11px 0!important;}
+#tournament .t-highlights .t-highlightItem small{display:block!important;}
+@media(max-width:700px){
+ #tournament .t-seasonArchive{padding:10px 12px!important;gap:8px!important;}
+ #tournament .t-seasonArchiveIntro{flex:1 1 45%!important;}
+ #tournament .t-seasonArchiveIntro strong{font-size:11px!important;}
+ #tournament .t-seasonArchiveControls{flex:0 1 55%!important;min-width:0!important;}
+ #tournament .t-seasonArchiveControls select{height:36px!important;font-size:12px!important;padding:0 8px!important;}
+ #tournament .t-submitPanel{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:10px!important;padding:12px!important;min-height:0!important;}
+ #tournament .t-submitPanel>div:first-child{width:100%!important;}
+ #tournament .t-submitPanel>div:first-child strong{font-size:13px!important;}
+ #tournament .t-submitPanel p{font-size:11px!important;}
+ #tournament .t-submitPanel>div:nth-child(2){width:100%!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:7px!important;}
+ #tournament .t-submitPanel .t-btn{width:100%!important;min-width:0!important;min-height:38px!important;}
+ #tournament #tournamentSubmitStatus{width:100%!important;}
+ #tournament .t-highlights .t-highlightItem:first-of-type strong{font-size:14px!important;}
+}
 </style>
 
+<style id="tournament-final-mobile-fix-v24">
+@media(max-width:760px){#tournament .t-seasonArchive{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(130px, .95fr)!important;align-items:center!important;gap:8px!important;padding:10px 12px!important;flex-wrap:nowrap!important}#tournament .t-seasonArchiveIntro{min-width:0!important;gap:8px!important}#tournament .t-seasonArchiveIntro small{display:none!important}#tournament .t-seasonArchiveIcon{width:34px!important;height:34px!important;font-size:18px!important;flex:0 0 34px}#tournament .t-seasonArchiveControls{display:block!important;min-width:0!important;width:100%!important}#tournament .t-seasonArchiveControls label,#tournament .t-seasonArchiveControls #tSeasonCaption{display:none!important}#tournament .t-seasonArchiveControls select{display:block!important;grid-column:auto!important;grid-row:auto!important;width:100%!important;min-width:0!important;height:42px!important;line-height:normal!important;padding:8px 28px 8px 10px!important;box-sizing:border-box!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;font-size:12px!important}}
+#tournament .t-seasonArchiveControls select{box-sizing:border-box;line-height:1.3;min-height:42px}
+@media(max-width:600px){#tournament .t-mobileRounds .t-seasonRow{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:5px!important}#tournament .t-mobileRounds .t-seasonRow .t-label{grid-column:1/-1}#tournament .t-mobileRounds .t-seasonRow .t-btn{min-width:0!important;width:100%!important;padding:9px 3px!important;font-size:9px!important;white-space:normal!important;line-height:1.2!important}}
+</style>
