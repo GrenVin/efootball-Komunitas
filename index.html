@@ -1455,6 +1455,8 @@ function leaguePairExistsMW(home,away,league,period){
 function leagueAssignmentsForMatchMW(m){return (state.leagueAssignments||{})[m.p1]||'';}
 function renderLeagueReportFormMW(){
   const h=document.getElementById('leagueReportHome'),a=document.getElementById('leagueReportAway');if(!h||!a)return;
+  // Simpan pilihan Away sebelum dropdown dibangun ulang saat refresh data otomatis.
+  const selectedAway=a.value;
   const me=currentMemberPlayerMW(),league=currentMemberLeagueMW(),period=state.activeLeaguePeriod||monthKeyFromDate(new Date().toLocaleDateString('en-GB'));
   h.innerHTML='<option value="">Pilih Home</option>'+(me?`<option value="${escAttr(me.id)}">${esc(me.ef)}</option>`:'');h.value=me?.id||'';h.disabled=true;
   if(!me||!league){a.innerHTML='<option value="">Belum terdaftar di League</option>';a.disabled=true;return;}
@@ -1463,6 +1465,8 @@ function renderLeagueReportFormMW(){
   leagueMatchListMW().filter(r=>r.status!=='rejected'&&r.league===league&&(r.period||monthKeyFromDate(r.date))===period).forEach(r=>{used.add(String(r.home));used.add(String(r.away));});
   const opts=state.players.filter(p=>p.id!==me.id&&(state.leagueAssignments||{})[p.id]===league&&!used.has(String(p.id))).map(p=>`<option value="${escAttr(p.id)}">${esc(p.ef)}</option>`).join('');
   a.innerHTML='<option value="">Pilih Away</option>'+opts;a.disabled=!opts;
+  // Pertahankan pilihan lama jika username lawan masih ada di daftar yang valid.
+  if(selectedAway && Array.from(a.options).some(option=>option.value===selectedAway))a.value=selectedAway;
 }
 function leagueReportCardMW(r,index){const status=r.status==='verified'?'🟢 Verified':r.status==='rejected'?'🔴 Rejected':'🟡 Pending';return `<div class="reportCard"><div class="reportCardTitle">${index+1}. 🏆 ${esc(r.homeName||r.home)} ${r.s1}–${r.s2} ${esc(r.awayName||r.away)}</div><div class="reportCardMeta">${esc(leagueName(r.league))} · 📅 ${esc(r.date)} · 🔑 ${esc(r.code||'-')}</div><div class="reportCardStatus">${status}</div></div>`;}
 function renderLeagueStatusGroupMW(id,list){const box=document.getElementById(id);if(!box)return;if(!list.length){box.innerHTML='<div class="reportEmpty">'+((state.settings||{}).leagueMatchEmptyText||(state.settings||{}).reportEmptyText||'Belum ada match.')+'</div>';return;}box.innerHTML=list.map((r,i)=>leagueReportCardMW(r,i)).join('');box.querySelectorAll('[data-copy-league]').forEach(b=>b.onclick=()=>copyLeagueCodeMW(b.dataset.copyLeague));}
