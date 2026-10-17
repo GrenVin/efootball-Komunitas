@@ -2467,6 +2467,13 @@ if(typeof supabaseClient!=='undefined'){supabaseClient.channel('tournament-share
   if(typeof openHistory==='function'){const oldOpenHistory=openHistory;const oldRenderPlayersForTour=typeof renderPlayers==='function'?renderPlayers:null;openHistory=function(id){syncTourMatches();if(oldRenderPlayersForTour)oldRenderPlayersForTour();oldOpenHistory(id);};}
   if(typeof refreshMemberAreaMW==='function'){const oldRefresh=refreshMemberAreaMW;refreshMemberAreaMW=function(){oldRefresh();renderAchievements();};}
   window.addEventListener('storage',e=>{if(e.key&&(e.key.startsWith(TOUR_BASE)||e.key===TOUR_ACTIVE)){syncTourMatches();if(typeof renderAll==='function')renderAll();renderAchievements();}});
+  /* Re-sync rankings as soon as async Supabase tournament data is loaded or updated.
+     Without this listener, results can stay stale until the Tournament tab is opened. */
+  window.addEventListener('efid-tournament-remote-updated',()=>{
+    syncTourMatches();
+    if(typeof renderAll==='function')renderAll();
+    renderAchievements();
+  });
   document.addEventListener('DOMContentLoaded',()=>{syncTourMatches();renderAchievements();});
   syncTourMatches();if(typeof renderAll==='function')renderAll();renderAchievements();
 })();
