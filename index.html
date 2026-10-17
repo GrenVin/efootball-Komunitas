@@ -231,7 +231,43 @@ main{min-width:0 !important;}
 .rankNum{font-size:1.15em;font-weight:900;line-height:1}
 .rankMove{display:inline-block;margin-left:5px;font-size:.68em;font-weight:800;line-height:1;vertical-align:middle;opacity:.9}
 .rankMove.up{color:#64e6a5}.rankMove.down{color:#ff7d87}.rankMove.same{color:#8f9aa5}
- .t-placeholder{color:#89939e!important;opacity:.72;font-style:italic} </style>
+ .t-placeholder{color:#89939e!important;opacity:.72;font-style:italic} 
+/* New compact horizontal player directory + separate champion strip */
+.playerHallOfFame{margin:0 0 14px;padding:14px;border:1px solid rgba(255,199,78,.25);border-radius:14px;background:linear-gradient(115deg,rgba(255,190,45,.065),rgba(7,17,25,.9) 55%);}
+.hallHead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}.hallHead h3{margin:3px 0;font-size:16px}.hallHead p{margin:0;color:#8e9ca7;font-size:11px}.hallCount{font-size:9px;font-weight:900;color:#ffd36a;border:1px solid rgba(255,211,106,.3);padding:6px 8px;border-radius:999px;white-space:nowrap}.hallStrip{display:flex;gap:8px;overflow-x:auto;padding-bottom:3px}.hallChampion{display:flex;align-items:center;gap:9px;min-width:180px;padding:9px 11px;border:1px solid rgba(255,211,106,.2);border-radius:10px;background:rgba(9,20,29,.85)}.hallCup{font-size:22px}.hallChampionInfo{display:flex;flex-direction:column;gap:3px;min-width:0}.hallChampionInfo b{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#f1f5f7}.hallChampionInfo span{font-size:10px;color:#ffd36a}.hallEmpty{padding:10px 12px;border-radius:9px;background:rgba(7,17,25,.65);font-size:11px;color:#8d9ba5}
+.playerCardsGrid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:8px!important}
+.playerCardV2{display:grid!important;grid-template-columns:minmax(155px,1.2fr) minmax(220px,1.6fr) minmax(130px,.9fr) auto!important;align-items:center!important;gap:12px!important;padding:11px 14px!important;border-radius:12px!important;min-height:100px}
+.playerCardTop{align-items:center!important;gap:9px!important;min-width:0}.playerName{font-size:16px!important}.playerRank{margin-top:5px!important}.playerAvatarV2{width:48px!important;height:48px!important;min-width:48px!important}.playerStatGrid{margin-top:0!important;gap:4px!important}.playerStatGrid>div{padding:7px 3px!important}.playerStatGrid b{font-size:13px!important}.playerWinRate{margin-top:0!important}.playerForm{margin-top:0!important;padding:8px!important;min-width:0}.playerFormHead{font-size:8px!important;gap:5px!important}.playerFormResults{gap:4px!important}.formDot{width:20px!important;height:20px!important;font-size:9px!important}.playerCardAction{margin:0!important;padding:8px!important;border:1px solid rgba(111,229,235,.18)!important;border-radius:8px;white-space:nowrap;gap:10px;font-weight:800;letter-spacing:.04em}
+#modal .historyOverview,#modal .historyAchievements{display:none!important}
+#modal .modalBody{background:#080f15!important}#modal .matchGroup{margin:7px 0!important}#modal .matchGroup summary{padding:10px 12px!important}#modal .matchLine{min-height:46px!important}
+@media(max-width:900px){.playerCardV2{grid-template-columns:minmax(130px,1fr) minmax(190px,1.3fr) minmax(115px,.8fr) auto!important;gap:8px!important;padding:9px!important}.playerAvatarV2{width:40px!important;height:40px!important;min-width:40px!important}.playerForm{display:none!important}}
+@media(max-width:600px){.playerCardV2{grid-template-columns:minmax(0,1fr) auto!important;gap:8px!important}.playerStatGrid{grid-column:1/-1!important;grid-row:2!important}.playerWinRate{grid-column:1/-1!important;grid-row:3!important}.playerCardAction{grid-column:2!important;grid-row:1!important}.playerCardTop{grid-column:1!important;grid-row:1!important}.playerForm{display:flex!important;grid-column:1/-1!important;grid-row:4!important}.hallChampion{min-width:155px}.hallHead h3{font-size:14px}}
+
+
+/* FINAL PLAYER INFO ROW LAYOUT: profile + W/L/D + streak + tournament awards */
+.playerCardsGrid{display:flex!important;flex-direction:column!important;gap:7px!important}
+.playerCardV2{display:grid!important;grid-template-columns:minmax(170px,1.05fr) minmax(160px,.9fr) minmax(155px,.9fr) minmax(210px,1.35fr) auto!important;align-items:center!important;gap:12px!important;padding:10px 13px!important;min-height:82px!important;background:linear-gradient(105deg,rgba(9,25,35,.97),rgba(8,15,22,.97))!important;border:1px solid rgba(77,151,169,.34)!important;border-radius:12px!important}
+.playerCardV2:hover{border-color:#42d7d4!important;transform:translateY(-1px)!important}
+.playerCardTop{display:flex!important;flex-direction:row!important;align-items:center!important;gap:10px!important;min-width:0!important}
+.playerAvatarV2{width:46px!important;height:46px!important;min-width:46px!important}
+.playerIdentity{min-width:0!important}.playerName{font-size:15px!important;overflow-wrap:anywhere}.playerRank{font-size:10px!important;margin-top:4px!important}
+.playerRowStats{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:5px!important;margin:0!important}
+.playerRowStats>div{padding:7px 3px!important;border:1px solid rgba(124,151,166,.17)!important;border-radius:7px!important;background:rgba(255,255,255,.025)!important;text-align:center!important}
+.playerRowStats>div span{display:block!important;font-size:8px!important;color:#82929e!important;letter-spacing:.08em!important}
+.playerRowStats>div b{font-size:14px!important;line-height:1.3!important}
+.playerRowStreak,.playerRowAchievement{min-width:0!important;display:flex!important;flex-direction:column!important;gap:5px!important}
+.playerRowStreak>small,.playerRowAchievement>small{font-size:8px!important;letter-spacing:.08em!important;color:#8194a0!important;font-weight:800!important}
+.playerRowStreak>b{font-size:10px!important;color:#e8f1f4!important}
+.playerRowDots{display:flex!important;gap:3px!important}.playerRowDots .formDot{width:17px!important;height:17px!important;font-size:8px!important;margin:0!important}
+.playerRowAwards{display:flex!important;flex-wrap:wrap!important;gap:4px!important;align-items:center!important}
+.playerAchievement{display:inline-flex!important;align-items:center!important;padding:5px 7px!important;border:1px solid rgba(255,201,82,.28)!important;border-radius:6px!important;background:rgba(255,190,45,.09)!important;color:#ffd36a!important;font-size:9px!important;font-weight:800!important;white-space:nowrap!important;max-width:100%!important}
+.playerAchievement.more{color:#8fe7e2!important;border-color:rgba(111,229,235,.2)!important;background:rgba(111,229,235,.06)!important}
+.playerNoAward{font-size:10px!important;color:#667985!important}
+.playerCardAction{font-size:9px!important;margin:0!important;padding:8px!important;white-space:nowrap!important;border:1px solid rgba(111,229,235,.18)!important;border-radius:8px!important;color:#67e5df!important}
+@media(max-width:1050px){.playerCardV2{grid-template-columns:minmax(150px,1fr) minmax(145px,.85fr) minmax(130px,.8fr) minmax(165px,1fr) auto!important;gap:7px!important;padding:9px!important}.playerAvatarV2{width:38px!important;height:38px!important;min-width:38px!important}.playerRowAwards .playerAchievement{font-size:8px!important;padding:4px 5px!important}}
+@media(max-width:760px){.playerCardV2{grid-template-columns:minmax(0,1fr) auto!important;gap:9px!important}.playerCardTop{grid-column:1!important;grid-row:1!important}.playerCardAction{grid-column:2!important;grid-row:1!important}.playerRowStats{grid-column:1/-1!important;grid-row:2!important}.playerRowStreak{grid-column:1/-1!important;grid-row:3!important}.playerRowAchievement{grid-column:1/-1!important;grid-row:4!important}.playerRowStreak{display:grid!important;grid-template-columns:1fr auto!important;align-items:center!important}.playerRowStreak>small{grid-column:1/-1!important}.playerRowDots{justify-content:flex-end!important}}
+
+</style>
 <style id="HOME-READABLE-DARK-BLUE">
 /* HOME ONLY: keep the original dark blue/silver dashboard theme, but make text and borders readable. */
 #home.panel{
@@ -1130,6 +1166,80 @@ main{min-width:0 !important;}
 <style id="efidTournamentSubmitStyle">.t-submitPanel{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px 18px;padding:16px 18px;margin:16px 0 18px;border:1px solid rgba(40,216,245,.38);border-left:4px solid #28d8f5;border-radius:14px;background:radial-gradient(circle at 100% 0,rgba(22,224,177,.10),transparent 38%),linear-gradient(135deg,#0b2635,#071621);box-shadow:0 8px 22px rgba(0,0,0,.16)}.t-submitPanel p{margin:5px 0 0;color:#9eb6c4;font-size:12px;line-height:1.5}.t-submitPanel>div:first-child strong{font-size:15px}.t-submitPanel #tournamentSubmitStatus{grid-column:1/-1;min-height:0}.t-submitPanel #tournamentSubmitStatus{font-size:12px;color:#6ee7d5}.t-submitPanel button{cursor:pointer}@media(max-width:700px){.t-submitPanel{grid-template-columns:minmax(0,1fr);padding:14px}.t-submitPanel>div:nth-child(2){display:grid!important;grid-template-columns:1fr}.t-submitPanel button{width:100%}.t-submitPanel #tournamentCancelBtn{text-align:center;justify-content:center;display:flex;align-items:center;white-space:normal;line-height:1.25}.t-submitPanel #tournamentSubmitStatus{grid-column:auto}}
 </style>
 
+
+<style id="player-info-compact-achievement-preview-v1">
+/* Compact Player Info preview: shorter cards and cleaner H2H history */
+.playerCardsGrid{gap:9px!important}
+.playerCardV2{padding:11px!important;border-radius:12px!important}
+.playerCardTop{gap:7px!important;align-items:center!important}
+.playerName{font-size:16px!important;margin-top:2px!important}
+.playerRank{margin-top:5px!important;font-size:9px!important}
+.playerAvatarV2{width:54px!important;height:54px!important;min-width:54px!important}
+.playerStatGrid{gap:4px!important;margin-top:9px!important}
+.playerStatGrid>div{padding:6px 3px!important;border-radius:7px!important}
+.playerStatGrid b{font-size:13px!important}
+.playerWinRate{margin-top:8px!important}
+.playerForm{margin-top:8px!important;padding:7px 8px!important}
+.playerFormResults{gap:5px!important;margin-top:5px!important}
+.formDot{width:21px!important;height:21px!important}
+.playerContactRow{display:none!important}
+.playerCardAction{margin-top:8px!important;padding-top:7px!important;font-size:9px!important}
+#modal .matchGroup{margin-bottom:8px!important;border-radius:10px!important;overflow:hidden}
+#modal .matchGroup summary{padding:10px 12px!important;font-size:12px!important}
+#modal .matchLine{display:grid!important;grid-template-columns:82px minmax(0,1fr) auto!important;gap:10px!important;padding:9px 11px!important;align-items:center!important;font-size:11px!important}
+#modal .matchLine>div:nth-child(2){line-height:1.45!important;min-width:0!important}
+#modal .matchLine b{font-size:11px!important}
+#modal .pill{font-size:9px!important;padding:4px 7px!important}
+@media(max-width:600px){.playerCardV2{padding:10px!important}.playerAvatarV2{width:48px!important;height:48px!important;min-width:48px!important}#modal .matchLine{grid-template-columns:70px minmax(0,1fr) auto!important;gap:6px!important;padding:8px!important;font-size:10px!important}#modal .matchLine b{font-size:10px!important}}
+</style>
+
+<style id="player-info-polished-v2">
+/* Refined compact directory: one balanced horizontal row per player */
+#players .playersHeader{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:16px}
+#players .playersHeader h2{margin:3px 0 4px;font-size:clamp(22px,2.2vw,29px);letter-spacing:-.035em}
+#players .playersIntro{margin:0;color:#91a5b2;font-size:12px}
+#players .playersCountBadge{border:1px solid rgba(79,211,218,.25);background:rgba(39,190,196,.07);color:#7de7e6;border-radius:999px;padding:8px 12px;font-size:10px;font-weight:800;white-space:nowrap}
+#players .playerHallOfFame{padding:14px 16px;margin:0 0 14px;border:1px solid rgba(240,190,75,.22);border-radius:14px;background:linear-gradient(110deg,rgba(40,33,18,.44),rgba(8,22,31,.96) 44%,rgba(8,18,26,.96));box-shadow:0 8px 24px rgba(0,0,0,.12)}
+#players .hallHead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:11px}
+#players .hallHead h3{margin:2px 0 3px;font-size:15px;letter-spacing:-.02em;color:#f0f5f7}
+#players .hallHead p{margin:0;font-size:11px;color:#91a5b2}
+#players .hallCount{border:1px solid rgba(245,190,65,.27);border-radius:999px;padding:6px 9px;color:#ffd56c;font-size:9px;font-weight:900;white-space:nowrap}
+#players .hallStrip{display:flex;gap:8px;overflow-x:auto;padding:1px 0 3px;scrollbar-width:thin}
+#players .hallChampion{display:flex;align-items:center;gap:9px;flex:0 0 auto;min-width:170px;max-width:235px;padding:9px 12px;border:1px solid rgba(255,207,93,.19);border-radius:10px;background:rgba(255,255,255,.025)}
+#players .hallCup{display:grid;place-items:center;width:31px;height:31px;border-radius:9px;background:rgba(255,196,62,.11);font-size:17px}
+#players .hallChampionInfo{min-width:0;display:flex;flex-direction:column;gap:3px}
+#players .hallChampionInfo b{font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#f2f5f7}
+#players .hallChampionInfo span{font-size:9px;color:#f0c55e}
+#players .playersToolbar{display:grid;grid-template-columns:minmax(0,1fr) 180px;gap:9px;margin-bottom:11px}
+#players .playerCardsGrid{display:flex!important;flex-direction:column!important;gap:7px!important}
+#players .playerCardV2{display:grid!important;grid-template-columns:minmax(175px,1.25fr) minmax(160px,1fr) minmax(160px,1fr) minmax(165px,1.15fr) 76px!important;align-items:center!important;gap:14px!important;min-height:84px!important;padding:10px 13px!important;border:1px solid rgba(103,142,159,.23)!important;border-radius:12px!important;background:linear-gradient(105deg,rgba(15,29,39,.98),rgba(9,17,24,.98))!important;box-shadow:0 3px 12px rgba(0,0,0,.09)!important;transition:border-color .16s ease,background .16s ease,transform .16s ease!important;cursor:pointer!important}
+#players .playerCardV2:hover{border-color:rgba(68,218,215,.65)!important;background:linear-gradient(105deg,rgba(15,38,48,.98),rgba(9,21,29,.98))!important;transform:translateY(-1px)!important}
+#players .playerCardTop{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:10px!important;min-width:0!important;width:100%!important;text-align:left!important}
+#players .playerAvatarV2{width:47px!important;height:47px!important;min-width:47px!important;border:2px solid rgba(117,207,215,.28)!important;box-shadow:0 0 0 3px rgba(91,190,201,.05)!important}
+#players .playerIdentity{display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;min-width:0!important;width:100%!important;text-align:left!important}
+#players .playerName{display:block!important;width:100%!important;min-width:0!important;font-size:14px!important;line-height:1.2!important;font-weight:850!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;text-align:left!important;overflow-wrap:normal!important}
+#players .playerRank{margin-top:5px!important;font-size:9px!important;color:#91a5b2!important}
+#players .playerRowStats{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:5px!important;margin:0!important}
+#players .playerRowStats>div{padding:7px 3px!important;text-align:center!important;border:1px solid rgba(135,159,173,.13)!important;border-radius:8px!important;background:rgba(255,255,255,.025)!important}
+#players .playerRowStats>div span{display:block!important;margin-bottom:3px!important;font-size:8px!important;letter-spacing:.09em!important;color:#8396a2!important}
+#players .playerRowStats>div b{font-size:14px!important;font-weight:850!important;line-height:1.1!important}
+#players .playerRowStreak,#players .playerRowAchievement{display:flex!important;flex-direction:column!important;justify-content:center!important;gap:5px!important;min-width:0!important;margin:0!important;padding:0!important;border:0!important;background:none!important}
+#players .playerRowStreak>small,#players .playerRowAchievement>small{font-size:8px!important;letter-spacing:.075em!important;color:#8297a3!important;font-weight:850!important;white-space:nowrap!important}
+#players .playerRowStreak>b{font-size:10px!important;color:#dbe8ec!important;line-height:1.2!important}
+#players .playerRowDots{display:flex!important;gap:4px!important;flex-wrap:nowrap!important}
+#players .formDot{width:19px!important;height:19px!important;min-width:19px!important;font-size:9px!important}
+#players .playerRowAwards{display:flex!important;flex-wrap:wrap!important;gap:4px!important;align-items:center!important}
+#players .playerAchievement{display:inline-flex!important;align-items:center!important;max-width:100%!important;padding:5px 7px!important;border-radius:6px!important;border:1px solid rgba(255,204,93,.23)!important;background:rgba(255,190,45,.075)!important;color:#f7d27a!important;font-size:9px!important;font-weight:800!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+#players .playerAchievement.more{color:#80e7e2!important;border-color:rgba(111,229,235,.2)!important;background:rgba(111,229,235,.06)!important}
+#players .playerNoAward{color:#718692!important;font-size:10px!important}
+#players .playerCardAction{display:flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;margin:0!important;padding:9px 7px!important;border:1px solid rgba(83,211,214,.22)!important;border-radius:8px!important;color:#7ce5e0!important;background:rgba(48,190,192,.045)!important;font-size:9px!important;font-weight:900!important;letter-spacing:.04em!important;white-space:nowrap!important}
+#players .playerCardAction span{font-size:14px!important}
+#players .playerContactRow{display:none!important}
+@media(max-width:1100px){#players .playerCardV2{grid-template-columns:minmax(155px,1.1fr) minmax(145px,1fr) minmax(145px,1fr) minmax(145px,1fr) 70px!important;gap:8px!important;padding:9px!important}#players .playerAvatarV2{width:40px!important;height:40px!important;min-width:40px!important}#players .playerAchievement{font-size:8px!important;padding:4px 5px!important}}
+@media(max-width:820px){#players .playerCardV2{grid-template-columns:minmax(0,1fr) auto!important;gap:10px!important;padding:11px!important}#players .playerCardTop{grid-column:1!important;grid-row:1!important}#players .playerCardAction{grid-column:2!important;grid-row:1!important}#players .playerRowStats{grid-column:1/-1!important;grid-row:2!important}#players .playerRowStreak{grid-column:1/-1!important;grid-row:3!important;display:grid!important;grid-template-columns:1fr auto!important;align-items:center!important}#players .playerRowStreak>small{grid-column:1/-1!important}#players .playerRowAchievement{grid-column:1/-1!important;grid-row:4!important}#players .playersToolbar{grid-template-columns:minmax(0,1fr) 145px!important}}
+@media(max-width:520px){#players .playersHeader{align-items:flex-start!important}#players .playersIntro{max-width:260px}#players .playersToolbar{grid-template-columns:1fr!important}#players .hallHead{align-items:flex-start!important}#players .hallChampion{min-width:150px!important}#players .playerCardV2{border-radius:10px!important}}
+</style>
+
 </head><body><div class="wrap">
 <header class="hero"><div class="brand"><img id="siteLogo" class="logo" src="logo.png"><div class="brandText"><h1 id="siteTitle">eFootball <span>Community</span></h1><div id="siteSubtitle" class="sub">Rank Member Komunitas eFootball ID🇮🇩</div></div></div><div class="headerActions"><button id="memberAuthBtn" class="btn memberAuthBtn">🔐 LOGIN / REGISTER</button><div id="liveBadge" class="badge">🟢 LIVE COMMUNITY TABLE</div></div></header>
 <div class="layout"><aside class="sidebar"><button class="navbtn active" data-tab="home"><span class="navicon">🏠</span><span id="navHome">HOME</span></button><button class="navbtn" data-tab="ranking"><span class="navicon">🏆</span><span id="navRanking">RANKING</span></button><button class="navbtn" data-tab="league"><span class="navicon">🏆</span><span id="navLeague">LEAGUE</span></button><button class="navbtn" data-tab="players"><span class="navicon">👥</span><span id="navPlayers">PLAYER INFO</span></button><button class="navbtn" data-tab="tournament"><span class="navicon">🎮</span><span>TOURNAMENT</span></button><button class="navbtn hidden memberPrivateNav" id="submitMatchNav" data-tab="submitMatch"><span class="navicon">⚽</span><span>SUBMIT MATCH</span></button><button class="navbtn hidden memberPrivateNav" id="profileMemberNav" data-tab="profileMember"><span class="navicon">👤</span><span>PROFILE MEMBER</span></button><div class="sideFooter"><b id="footerTitle">eFootball Community</b><br><span id="footerText">Play · Compete · Grow Together</span></div></aside><main><section id="home" class="tab panel homeV6"><div class="homeV6Wrap">
@@ -1282,7 +1392,7 @@ main{min-width:0 !important;}
   <div id="authLoginPanel"><div class="authForm"><div class="field full"><label id="loginUsernameLabelUi">eFootball Username</label><input id="loginUsername" autocomplete="username" placeholder="username eFootball"></div><div class="field full"><label id="loginPasswordLabelUi">Password</label><input id="loginPassword" type="password" autocomplete="current-password"></div><button class="btn primary" id="loginMemberBtn">Login</button></div><div class="authHint" id="loginHintUi">Member lama tidak perlu register ulang. Jika belum punya password login, admin dapat melakukan Reset Password dari Manage Members.</div></div>
   <div id="authRegisterPanel" class="hidden"><div class="authForm"><div class="field full"><label id="registerUsernameLabelUi">eFootball Username *</label><input id="regUsername" placeholder=""></div><div class="field"><label id="registerPasswordLabelUi">Password *</label><input id="regPassword" type="password" placeholder=""></div><div class="field"><label id="registerWaLabelUi">WhatsApp *</label><input id="regWa" placeholder=""></div><div class="field"><label id="registerTgLabelUi">Telegram (optional)</label><input id="regTg" placeholder=""></div><div class="field full"><label id="registerPhotoLabelUi">Profile Photo *</label><input id="regAvatar" type="file" accept="image/*"><img id="regAvatarPreview" class="avatarUploadPreview"></div><button class="btn primary full" id="registerMemberBtn">Ajukan Pendaftaran</button></div><div class="authHint" id="registerApprovalHintUi"><span id="registerApprovalMessageUi">Pendaftaran masuk ke Approval Member. Anda harus sudah bergabung di komunitas WhatsApp sebelum admin menyetujui.</span> <a id="registerWhatsappLinkUi" href="#" target="_blank" rel="noopener noreferrer">👉 Join Komunitas WhatsApp</a></div></div>
 </div></div>
-<div id="modal" class="modal hidden"><div class="modalBox"><div class="row"><h2 id="modalTitle" style="margin:0">Riwayat</h2><button class="btn" id="closeModal">Tutup</button></div><div id="modalBody" class="history"></div></div></div>
+<div id="modal" class="modal hidden"><div class="modalBox"><div class="modalHead"><h2 id="modalTitle" style="margin:0">Riwayat</h2><button class="btn" id="closeModal">Tutup</button></div><div id="modalBody" class="history modalBody"></div></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL='https://vlhmdhhyegfxydvnxvtq.supabase.co';
@@ -1688,6 +1798,46 @@ function playerFormMarkup(id){
   const label=f.streak?`🔥 ${f.streak} ${f.streakType==='W'?'WIN':f.streakType==='L'?'LOSS':'DRAW'} STREAK`:'— NO STREAK';
   return `<div class="playerForm"><div class="playerFormHead"><span>PLAYER FORM <small>LAST 5</small></span><b>${esc(label)}</b></div><div class="playerFormResults">${f.recentPadded.map(r=>`<span class="formDot ${r?r.toLowerCase():'empty'}">${r||'·'}</span>`).join('')}</div></div>`;
 }
+function playerTournamentAchievements(playerName){
+  const base='efid_tournament_test_v2', active=Math.max(1,Number(localStorage.getItem('efid_tournament_active_season_v2')||1));
+  const found=[]; const nums=new Set([active]);
+  for(let n=1;n<=100;n++) if(localStorage.getItem(base+'_s'+n)||(n===1&&localStorage.getItem(base))) nums.add(n);
+  nums.forEach(n=>{
+    let d=null; try{d=JSON.parse(localStorage.getItem(base+'_s'+n)||'null')}catch(e){}
+    if(!d&&n===1){try{d=JSON.parse(localStorage.getItem(base)||'null')}catch(e){}}
+    if(!d||!Array.isArray(d.bracket))return;
+    const i=d.bracket.findIndex(m=>String(m.round||'').toUpperCase()==='FINAL'); if(i<0)return;
+    const score=d.scores&&d.scores[i]; if(!score)return;
+    const match=d.bracket[i]||{};
+    let winner=String(score.winner||'').trim();
+    // Use the Tournament final's saved score as the source of truth if the archive did not store winner explicitly.
+    if(!winner && Number.isFinite(Number(score.a)) && Number.isFinite(Number(score.b))){
+      const a=Number(score.a), b=Number(score.b);
+      winner=a===b?'DRAW':(a>b?String(match.a||'').trim():String(match.b||'').trim());
+    }
+    if(!winner || winner.toUpperCase()==='DRAW')return;
+    if(winner.trim().toLowerCase()===String(playerName).trim().toLowerCase()){
+      const label=localStorage.getItem('efid_tournament_period_label_v2_'+n)||('Season '+n);
+      found.push({label,season:n});
+    }
+  });
+  return found.sort((a,b)=>b.season-a.season);
+}
+function playerAchievementMarkup(playerName){
+  const wins=playerTournamentAchievements(playerName);
+  if(!wins.length)return '';
+  const shown=wins.slice(0,2).map(x=>`<span class="playerAchievement">🏆 Champion ${esc(x.label)}</span>`).join('');
+  const more=wins.length>2?`<span class="playerAchievement more">+${wins.length-2} lagi</span>`:'';
+  return `<div class="playerAchievementRow" title="${escAttr(wins.map(x=>'Champion '+x.label).join(', '))}">${shown}${more}</div>`;
+}
+function renderPlayerHallOfFame(){
+  const host=document.getElementById('playerHallOfFame'); if(!host)return;
+  const champions=[];
+  state.players.forEach(p=>playerTournamentAchievements(p.ef).forEach(a=>champions.push({name:p.ef,label:a.label,season:a.season})));
+  champions.sort((a,b)=>b.season-a.season||a.name.localeCompare(b.name));
+  const unique=champions.filter((x,i,arr)=>arr.findIndex(y=>y.season===x.season&&y.name.toLowerCase()===x.name.toLowerCase())===i);
+  host.innerHTML=`<div class="hallHead"><div><span class="playersEyebrow">TOURNAMENT HONORS</span><h3>🏆 Season Champions</h3><p>Juara tournament berdasarkan arsip season yang tersimpan.</p></div><span class="hallCount">${unique.length} GELAR</span></div>${unique.length?`<div class="hallStrip">${unique.map(x=>`<div class="hallChampion"><span class="hallCup">🏆</span><div class="hallChampionInfo"><b>${esc(x.name)}</b><span>${esc(x.label)} Champion</span></div></div>`).join('')}</div>`:`<div class="hallEmpty">Belum ada juara season yang tercatat di arsip tournament.</div>`}`;
+}
 function renderPlayers(){
   const fallback='data:image/svg+xml;charset=UTF-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160"><circle cx="80" cy="80" r="76" fill="#0c141c" stroke="#7b8792" stroke-width="4"/><circle cx="80" cy="62" r="25" fill="#c5ccd3"/><path d="M35 135c7-31 25-46 45-46s38 15 45 46" fill="#c5ccd3"/></svg>');
   const query=(document.getElementById('playerSearch')?.value||'').trim().toLowerCase();
@@ -1707,34 +1857,48 @@ function renderPlayers(){
     const rate=p.m?Math.round((p.w/p.m)*100):0;
     const rank=index+1;
     const rankLabel=rank<=3?['🥇','🥈','🥉'][rank-1]:String(rank).padStart(2,'0');
+    const form=playerFormData(p.id);
+    const streakText=form.streak?`${form.streak} ${form.streakType==='W'?'WIN':form.streakType==='L'?'LOSS':'DRAW'}`:'—';
+    const awards=playerTournamentAchievements(p.ef);
+    const awardMarkup=awards.length?`<div class="playerRowAwards">${awards.slice(0,2).map(a=>`<span class="playerAchievement" title="${escAttr('Champion '+a.label)}">🏆 ${esc(a.label)}</span>`).join('')}${awards.length>2?`<span class="playerAchievement more">+${awards.length-2}</span>`:''}</div>`:'<span class="playerNoAward">Belum ada gelar</span>';
     return `<article class="card profile playerCardV2" data-player="${escAttr(p.id)}">
       <div class="playerCardTop">
+        <div class="avatarWrap playerAvatarV2"><img class="avatar" src="${escAttr(avatar)}" alt="Avatar ${escAttr(p.ef)}" onerror="this.onerror=null;this.src='${fallback}'"></div>
         <div class="playerIdentity">
-          <div class="muted small">eFootball ID</div>
           <div class="playerName">${esc(p.ef)}</div>
           <div class="playerRank"><span>${rankLabel}</span> ${p.m?`#${rank} · ${p.pts} PTS`:"Not Yet Played"}</div>
         </div>
-        <div class="avatarWrap playerAvatarV2"><img class="avatar" src="${escAttr(avatar)}" alt="Avatar ${escAttr(p.ef)}" onerror="this.onerror=null;this.src='${fallback}'"></div>
       </div>
-      <div class="playerStatGrid">
-        <div><span>W</span><b class="w">${p.w}</b></div>
-        <div><span>L</span><b class="l">${p.l}</b></div>
-        <div><span>D</span><b class="d">${p.d}</b></div>
-        <div><span>MATCH</span><b>${p.m}</b></div>
+      <div class="playerStatGrid playerRowStats">
+        <div><span>WIN</span><b class="w">${p.w}</b></div>
+        <div><span>LOSE</span><b class="l">${p.l}</b></div>
+        <div><span>DRAW</span><b class="d">${p.d}</b></div>
       </div>
-      <div class="playerWinRate"><div class="winRateHead"><span>WIN RATE</span><b>${rate}%</b></div><div class="winRateTrack"><i style="width:${rate}%"></i></div></div>
-      ${playerFormMarkup(p.id)}
-      <div class="playerContactRow">
-        <div class="mini playerContact"><span>WhatsApp</span><b>${esc(maskWA(p.wa))}</b></div>
-        <div class="mini playerContact"><span>Telegram</span><b>${esc(maskTG(p.tg))}</b></div>
-      </div>
-      <div class="playerCardAction">View match history <span>→</span></div>
+      <div class="playerRowStreak"><small>WIN STREAK / FORM</small><b>${form.streakType==='W'&&form.streak?`🔥 ${streakText}`:esc(streakText)}</b><div class="playerRowDots">${form.recentPadded.map(r=>`<span class="formDot ${r?r.toLowerCase():'empty'}">${r||'·'}</span>`).join('')}</div></div>
+      <div class="playerRowAchievement"><small>TOURNAMENT ACHIEVEMENT</small>${awardMarkup}</div>
+      <div class="playerCardAction">HISTORY <span>→</span></div>
     </article>`;
   }).join('');
   document.querySelectorAll('.playerCardV2').forEach(c=>c.addEventListener('click',()=>openHistory(c.dataset.player)));
 }
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}function escAttr(s){return esc(s)}
-function openHistory(id){const p=player(id);if(!p)return;closeHistory();const opponents=state.players.filter(q=>q.id!==id&&state.matches.some(m=>(m.p1===id&&m.p2===q.id)||(m.p2===id&&m.p1===q.id)));let html='';opponents.forEach(o=>{const ms=state.matches.filter(m=>(m.p1===id&&m.p2===o.id)||(m.p2===id&&m.p1===o.id)).sort((a,b)=>a.id-b.id);html+=`<details class="matchGroup" open><summary>${esc(p.ef)} VS ${esc(o.ef)}</summary>`;ms.forEach(m=>{const s1=m.p1===id?m.s1:m.s2,s2=m.p1===id?m.s2:m.s1,o2=outcome(s1,s2);const tag=m.source==='TOUR'||m.type==='tournament'?'{TOUR}':(isLiga(m)?'{LIGA}':'{1VS1}');html+=`<div class="matchLine"><div>${esc(m.date)}</div><div><b>${tag} ${esc(p.ef)} VS ${esc(o.ef)}</b><br>SCORE ${s1} VS ${s2}</div><div><span class="pill ${o2}">${o2==='win'?'WIN':o2==='loss'?'LOSE':'DRAW'}</span></div></div>`});html+='</details>'});if(!html)html='<div class="notice">Belum ada pertandingan.</div>';document.getElementById('modalTitle').textContent=`${p.ef} — ${state.settings.historyTitle}`;document.getElementById('modalBody').innerHTML=html;document.getElementById('modal').classList.remove('hidden');document.body.style.overflow='hidden'}
+function openHistory(id){
+  const p=player(id);if(!p)return;closeHistory();
+  const matches=state.matches.filter(m=>m.p1===id||m.p2===id).slice().sort((a,b)=>{const da=parseMatchDate(a.date),db=parseMatchDate(b.date);return (db?db.getTime():0)-(da?da.getTime():0)||(Number(b.id)||0)-(Number(a.id)||0)});
+  let wins=0,losses=0,draws=0; matches.forEach(m=>{const a=m.p1===id?Number(m.s1)||0:Number(m.s2)||0,b=m.p1===id?Number(m.s2)||0:Number(m.s1)||0;const o=outcome(a,b);if(o==='win')wins++;else if(o==='loss')losses++;else draws++;});
+  let html='';
+  const opponents=state.players.filter(q=>q.id!==id&&matches.some(m=>(m.p1===id&&m.p2===q.id)||(m.p2===id&&m.p1===q.id)));
+  opponents.forEach(o=>{
+    const ms=matches.filter(m=>(m.p1===id&&m.p2===o.id)||(m.p2===id&&m.p1===o.id));
+    let ow=0,ol=0,od=0;ms.forEach(m=>{const a=m.p1===id?Number(m.s1)||0:Number(m.s2)||0,b=m.p1===id?Number(m.s2)||0:Number(m.s1)||0;const r=outcome(a,b);if(r==='win')ow++;else if(r==='loss')ol++;else od++;});
+    html+=`<details class="matchGroup"><summary><span>${esc(p.ef)} <span style="color:#6fe5eb">VS</span> ${esc(o.ef)}</span><span style="font-size:10px;color:#9baab5">${ms.length} MATCH · ${ow}W ${ol}L ${od}D</span></summary>`;
+    ms.forEach(m=>{const s1=m.p1===id?m.s1:m.s2,s2=m.p1===id?m.s2:m.s1,o2=outcome(s1,s2);const tag=m.source==='TOUR'||m.type==='tournament'?'🏆 TOUR':(isLiga(m)?'⚽ LIGA':'⚔ H2H');html+=`<div class="matchLine"><div>${esc(m.date)}</div><div><b>${tag} · ${esc(p.ef)} vs ${esc(o.ef)}</b><br><span style="font-size:10px;color:#91a0ab">SCORE</span> <strong style="font-size:14px">${s1} – ${s2}</strong></div><div><span class="pill ${o2}">${o2==='win'?'WIN':o2==='loss'?'LOSE':'DRAW'}</span></div></div>`});html+='</details>';
+  });
+  if(!matches.length)html+='<div class="notice">Belum ada pertandingan.</div>';
+  document.getElementById('modalTitle').textContent=`${p.ef} — Match Center`;
+  document.getElementById('modalBody').innerHTML=html;
+  document.getElementById('modal').classList.remove('hidden');document.body.style.overflow='hidden';
+}
 function closeHistory(){document.getElementById('modal').classList.add('hidden');document.body.style.overflow=''}
 function deletePlayer(id){const p=player(id);if(!confirm(`Hapus member ${p.ef}? Semua pertandingan member ini juga akan dihapus.`))return;state.players=state.players.filter(x=>x.id!==id);state.matches=state.matches.filter(m=>m.p1!==id&&m.p2!==id);save()}
 
@@ -1999,6 +2163,32 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden){const mon
 .playerContact b{display:block;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .playerCardAction{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:10px;border-top:1px solid rgba(143,157,169,.14);font-size:9px;color:#87949e}
 .playerCardAction span{font-size:15px;color:#6fe5eb}
+/* Tournament achievement badges on compact player cards */
+.playerAchievementRow{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px;min-width:0}
+.playerAchievement{display:inline-flex;align-items:center;gap:4px;max-width:100%;padding:4px 7px;border-radius:999px;border:1px solid rgba(255,198,74,.35);background:rgba(255,190,45,.09);color:#ffd36a;font-size:8px;font-weight:850;line-height:1.25;white-space:normal}
+.playerAchievement.more{border-color:rgba(99,223,224,.3);background:rgba(50,205,205,.08);color:#75e5e7}
+.playerAchievementEmpty{font-size:8px;color:#75838d;padding:3px 0}
+#modal .modalBox{max-width:820px!important;padding:0!important;overflow:hidden!important;border-radius:18px!important}
+#modal .modalHead{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;background:linear-gradient(120deg,#18242e,#0b1117);border-bottom:1px solid rgba(111,229,235,.22)}
+#modal .modalHead h2{margin:0!important;font-size:20px!important;letter-spacing:-.025em}
+#modal .modalBody{padding:14px 18px 18px!important;max-height:calc(85vh - 70px);overflow:auto}
+#modal .historyOverview{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:14px}
+#modal .historyMetric{padding:10px 8px;border-radius:11px;background:linear-gradient(145deg,#151f28,#0d1319);border:1px solid rgba(150,170,185,.18);text-align:center}
+#modal .historyMetric span{display:block;font-size:9px;color:#8b9aa5;letter-spacing:.06em;margin-bottom:4px}
+#modal .historyMetric b{font-size:19px;color:#e9f1f5}
+#modal .historyMetric.win b{color:#38dfb4}#modal .historyMetric.loss b{color:#ff7185}#modal .historyMetric.draw b{color:#f5c95c}
+#modal .historyAchievements{display:flex;flex-wrap:wrap;gap:6px;padding:11px 12px;margin-bottom:14px;border:1px solid rgba(255,198,74,.24);border-radius:12px;background:linear-gradient(120deg,rgba(255,190,45,.07),rgba(8,18,25,.5))}
+#modal .historyAchievements strong{width:100%;font-size:10px;letter-spacing:.08em;color:#ffd36a;margin-bottom:2px}
+#modal .historyAchievements .playerAchievement{font-size:9px}
+#modal .matchGroup{margin:9px 0!important;border-radius:12px!important;background:#0b1218!important;border-color:rgba(132,158,174,.2)!important;box-shadow:none!important}
+#modal .matchGroup summary{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px!important;background:linear-gradient(100deg,#19242d,#10171e)!important;font-size:12px!important}
+#modal .matchGroup summary::marker{color:#5ee2df}
+#modal .matchGroup .matchLine{padding:10px 13px!important;min-height:53px}
+#modal .matchLine>div:first-child{font-size:10px;color:#91a0ab;white-space:nowrap}
+#modal .matchLine>div:nth-child(2){font-size:11px;color:#dce5ea}
+#modal .matchLine>div:nth-child(2) b{font-size:11px;color:#f1f5f7}
+#modal .matchLine .pill{min-width:43px;text-align:center}
+@media(max-width:600px){#modal .modalHead{padding:13px 14px}#modal .modalHead h2{font-size:17px!important}#modal .modalBody{padding:11px!important}#modal .historyOverview{gap:5px}#modal .historyMetric{padding:8px 4px}#modal .historyMetric span{font-size:8px}#modal .historyMetric b{font-size:16px}#modal .matchLine{grid-template-columns:68px minmax(0,1fr) auto!important;gap:5px!important}}
 .playersEmpty{grid-column:1/-1;padding:45px 20px;text-align:center;border:1px dashed rgba(143,157,169,.25);border-radius:13px;color:#7f8b96}
 .playersEmptyIcon{font-size:28px;margin-bottom:8px;color:#7bdfe1}
 .playersEmpty b{display:block;color:#dbe2e7;font-size:14px;margin-bottom:5px}
