@@ -867,7 +867,38 @@ if(a==='score'){const sa=Number($('tourScoreA'+i).value),sb=Number($('tourScoreB
 $('tourPeriodSelect')?.addEventListener('change',async e=>{season=Number(e.target.value)||1;await loadTournamentRemote();render()});
 $('tourPeriodActivate')?.addEventListener('click',async()=>{activeSeason=season;localStorage.setItem(ACTIVE,String(activeSeason));window.dispatchEvent(new Event('efid-tournament-season-change'));render();try{await syncTournamentRemote(read());alert((localStorage.getItem('efid_tournament_period_label_v2_'+activeSeason)||('Season '+activeSeason))+' sekarang menjadi period aktif Tournament dan tersimpan online.')}catch(e){console.error(e);alert('Periode aktif berubah di browser, tetapi gagal disimpan online: '+(e.message||e))}});
 $('tourPeriodAdd')?.addEventListener('click',()=>{const label=prompt('Masukkan nama periode Tournament baru:\n\nContoh: Oktober 2026, Season 4, Liga Testing');if(label===null)return;const clean=label.trim();if(!clean)return alert('Nama periode tidak boleh kosong.');const next=Math.max(0,...periods)+1;periods.push(next);periods.sort((a,b)=>a-b);localStorage.setItem('efid_tournament_period_label_v2_'+next,clean);savePeriods();season=next;save(empty());render();alert(clean+' berhasil dibuat.')});
-$('tourPeriodDelete')?.addEventListener('click',()=>{if(periods.length<=1)return alert('Minimal satu period harus tersedia.');const d=read();if((d.applications?.length||0)||(d.bracket?.length||0)){if(!confirm(periodName()+' has data. Delete this period and its registrations and bracket?'))return}else if(!confirm('Delete Period '+periodName()+'?'))return;localStorage.removeItem(key());periods=periods.filter(n=>n!==season);if(!periods.includes(activeSeason)){activeSeason=periods[0];localStorage.setItem(ACTIVE,String(activeSeason))}season=periods.includes(activeSeason)?activeSeason:periods[0];savePeriods();render();window.dispatchEvent(new Event('storage'))});
+$('tourPeriodDelete')?.addEventListener('click',async()=>{
+ if(periods.length<=1)return alert('Minimal satu period harus tersedia.');
+ const deletingSeason=Number(season), deletingLabel=periodName(season), d=read();
+ if((d.applications?.length||0)||(d.bracket?.length||0)){
+  if(!confirm(`${deletingLabel} memiliki data. Hapus PERMANEN season ini beserta seluruh pendaftaran, bracket, skor, dan datanya dari database? Tindakan ini tidak dapat dibatalkan.`))return;
+ }else if(!confirm(`Hapus PERMANEN ${deletingLabel} dari website dan database? Tindakan ini tidak dapat dibatalkan.`))return;
+ const btn=$('tourPeriodDelete');if(btn)btn.disabled=true;
+ try{
+  if(typeof supabaseClient==='undefined')throw new Error('Koneksi Supabase tidak tersedia. Season tidak dihapus.');
+  const {data:row,error:readError}=await supabaseClient.from('app_state').select('data').eq('id',1).single();
+  if(readError)throw readError;
+  const latest=row?.data&&typeof row.data==='object'?row.data:{};
+  const meta={...(latest.tournamentMeta||{})};
+  const remotePeriods=Array.isArray(meta.periods)?meta.periods.map(Number):periods.slice();
+  meta.periods=remotePeriods.filter(n=>n!==deletingSeason);
+  if(!meta.periods.length)throw new Error('Database harus memiliki minimal satu season.');
+  const labels={...(meta.labels||{})};delete labels[String(deletingSeason)];meta.labels=labels;
+  if(Number(meta.activeSeason)===deletingSeason)meta.activeSeason=meta.periods[0];
+  meta.updatedAt=new Date().toISOString();
+  const tournamentData={...(latest.tournamentData||{})};delete tournamentData[String(deletingSeason)];
+  const nextData={...latest,tournamentMeta:meta,tournamentData};
+  const {data:updated,error:updateError}=await supabaseClient.from('app_state').update({data:nextData,updated_at:new Date().toISOString()}).eq('id',1).select('id').single();
+  if(updateError)throw updateError;if(!updated)throw new Error('Database tidak mengonfirmasi penghapusan.');
+  localStorage.removeItem(BASE+'_s'+deletingSeason);
+  localStorage.removeItem('efid_tournament_period_label_v2_'+deletingSeason);
+  periods=meta.periods.map(Number).sort((a,b)=>a-b);activeSeason=Number(meta.activeSeason)||periods[0];localStorage.setItem(ACTIVE,String(activeSeason));savePeriods();
+  season=periods.includes(activeSeason)?activeSeason:periods[0];
+  await loadTournamentRemote();render();window.dispatchEvent(new Event('storage'));window.dispatchEvent(new Event('efid-tournament-season-change'));
+  alert(`${deletingLabel} beserta seluruh data pendaftaran, bracket, dan skor berhasil dihapus permanen dari database.`);
+ }catch(err){console.error('[Tournament delete period]',err);alert('Penghapusan gagal disimpan ke database, jadi season tidak dianggap terhapus. Detail: '+(err?.message||err));}
+ finally{if(btn)btn.disabled=false;render();}
+});
 $('tourRefreshAdmin')?.addEventListener('click',async()=>{const b=$('tourRefreshAdmin');if(b)b.disabled=true;try{await loadTournamentRemote();render();const d=read();$('tourAdminStatus').textContent=`${periodName(season)} · ${d.applications.filter(x=>x.status==='pending').length} Pending · ${d.applications.filter(x=>x.status==='approved').length}/16 Approved · ${d.status==='open'?'Open':'Closed'} · Data refreshed from Supabase`;}finally{if(b)b.disabled=false}});
 $('tourDrawAdmin')?.addEventListener('click',()=>{const d=read(),p=d.applications.filter(x=>x.status==='approved');if(p.length!==16){alert(`${periodName()}: exactly 16 approved players are required. Current: ${p.length}.`);return}const arr=p.slice().sort(()=>Math.random()-.5);d.bracket=[];for(let i=0;i<16;i+=2)d.bracket.push({a:arr[i].username,b:arr[i+1].username,round:'R16'});d.scores={};d.status='closed';save(d);render();alert('Bracket '+periodName()+' berhasil diacak.')});
 $('tourResetAdmin')?.addEventListener('click',()=>{if(confirm('Hapus seluruh data testing Tournament '+periodName()+'? Data pendaftaran, bracket, dan skor pada period ini akan dikosongkan.')){save(empty());render();window.dispatchEvent(new Event('efid-tournament-season-change'));alert('Data testing '+periodName()+' berhasil dikosongkan.')}});
