@@ -1240,6 +1240,81 @@ main{min-width:0 !important;}
 @media(max-width:520px){#players .playersHeader{align-items:flex-start!important}#players .playersIntro{max-width:260px}#players .playersToolbar{grid-template-columns:1fr!important}#players .hallHead{align-items:flex-start!important}#players .hallChampion{min-width:150px!important}#players .playerCardV2{border-radius:10px!important}}
 </style>
 
+
+<style id="ranking-mobile-fit-v1">
+/* Khusus Ranking: seluruh kolom muat di layar HP tanpa zoom out. League tidak disentuh. */
+#ranking #rankingTable { min-width:760px; }
+@media (max-width:600px) {
+  #ranking { padding:12px; }
+  #ranking .table-wrap {
+    width:100%;
+    max-width:100%;
+    overflow-x:hidden !important;
+    overflow-y:visible;
+  }
+  #ranking .table-wrap table#rankingTable {
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100%;
+    table-layout:fixed !important;
+    border-spacing:0;
+    font-size:11px;
+  }
+  #ranking #rankingTable th,
+  #ranking #rankingTable td {
+    padding:8px 2px !important;
+    overflow-wrap:anywhere;
+    word-break:normal;
+    line-height:1.25;
+  }
+  #ranking #rankingTable thead th {
+    font-size:10px;
+    white-space:normal;
+    vertical-align:middle;
+  }
+  #ranking #rankingTable th:nth-child(1),
+  #ranking #rankingTable td:nth-child(1) { width:12%; text-align:center; }
+  #ranking #rankingTable th:nth-child(2) {
+    width:36%;
+    text-align:left;
+    font-size:10px;
+  }
+  #ranking #rankingTable td:nth-child(2) {
+    width:36%;
+    text-align:left;
+    font-size:11px;
+    overflow-wrap:anywhere;
+  }
+  #ranking #rankingTable th:nth-child(n+3),
+  #ranking #rankingTable td:nth-child(n+3) {
+    text-align:center;
+    font-variant-numeric:tabular-nums;
+  }
+  #ranking #rankingTable th:nth-child(3),
+  #ranking #rankingTable td:nth-child(3),
+  #ranking #rankingTable th:nth-child(4),
+  #ranking #rankingTable td:nth-child(4),
+  #ranking #rankingTable th:nth-child(5),
+  #ranking #rankingTable td:nth-child(5),
+  #ranking #rankingTable th:nth-child(6),
+  #ranking #rankingTable td:nth-child(6) { width:8%; }
+  #ranking #rankingTable th:nth-child(7),
+  #ranking #rankingTable td:nth-child(7) { width:12%; }
+  #ranking #rankingTable .rankCell { white-space:normal; }
+  #ranking #rankingTable .rankMove { display:block; margin:2px auto 0; font-size:9px; }
+}
+</style>
+
+<style id="league-feature-removed">
+
+/* League feature removed from the member-facing interface. Legacy data/code is retained for compatibility. */
+.navbtn:has(#navLeague),
+#league,
+#submitMatch .settingCard.memberSubmitCard:has(#submitLeagueTitleUi),
+#submitMatch .reportHistoryCard.leagueMatchHistoryCard,
+.profileMemberGrid .profileInfoBox:has(#profileLeagueLabelUi) { display:none !important; }
+
+</style>
 </head><body><div class="wrap">
 <header class="hero"><div class="brand"><img id="siteLogo" class="logo" src="logo.png"><div class="brandText"><h1 id="siteTitle">eFootball <span>Community</span></h1><div id="siteSubtitle" class="sub">Rank Member Komunitas eFootball ID🇮🇩</div></div></div><div class="headerActions"><button id="memberAuthBtn" class="btn memberAuthBtn">🔐 LOGIN / REGISTER</button><div id="liveBadge" class="badge">🟢 LIVE COMMUNITY TABLE</div></div></header>
 <div class="layout"><aside class="sidebar"><button class="navbtn active" data-tab="home"><span class="navicon">🏠</span><span id="navHome">HOME</span></button><button class="navbtn" data-tab="ranking"><span class="navicon">🏆</span><span id="navRanking">RANKING</span></button><button class="navbtn" data-tab="league"><span class="navicon">🏆</span><span id="navLeague">LEAGUE</span></button><button class="navbtn" data-tab="players"><span class="navicon">👥</span><span id="navPlayers">PLAYER INFO</span></button><button class="navbtn" data-tab="tournament"><span class="navicon">🎮</span><span>TOURNAMENT</span></button><button class="navbtn hidden memberPrivateNav" id="submitMatchNav" data-tab="submitMatch"><span class="navicon">⚽</span><span>SUBMIT MATCH</span></button><button class="navbtn hidden memberPrivateNav" id="profileMemberNav" data-tab="profileMember"><span class="navicon">👤</span><span>PROFILE MEMBER</span></button><div class="sideFooter"><b id="footerTitle">eFootball Community</b><br><span id="footerText">Play · Compete · Grow Together</span></div></aside><main><section id="home" class="tab panel homeV6"><div class="homeV6Wrap">
@@ -1730,7 +1805,7 @@ function renderRanking(){
   renderRankingPeriodOptions();
   const sel=document.getElementById('rankingPeriodSelect'); const period=sel?.value||'total';
   const rows=rankingRowsForPeriod(period); const s=state.settings;
-  document.getElementById('rankingTable').innerHTML='<thead><tr><th>'+esc(s.colRank)+'</th><th>'+esc(s.colPlayer)+'</th><th>'+esc(s.colWin)+'</th><th>'+esc(s.colLoss)+'</th><th>'+esc(s.colDraw)+'</th><th>'+esc(s.colMatches)+'</th><th>'+esc(s.colPoints)+'</th></tr></thead><tbody>'+rows.map((p,i)=>`<tr><td class="rankCell"><span class="rankNum">${i+1}</span>${period==='total'?movementMarkup(p.id,i+1):'<span class="rankMove same">—</span>'}</td><th>${esc(p.ef)}</th><td class="w">${p.w}</td><td class="l">${p.l}</td><td class="d">${p.d}</td><td>${p.m}</td><td><b>${p.pts}</b></td></tr>`).join('')+'</tbody>';
+  document.getElementById('rankingTable').innerHTML='<thead><tr><th>Rank</th><th>eFootball Username</th><th>M</th><th>W</th><th>D</th><th>L</th><th>PTS</th></tr></thead><tbody>'+rows.map((p,i)=>`<tr><td class="rankCell"><span class="rankNum">${i+1}</span>${period==='total'?movementMarkup(p.id,i+1):'<span class="rankMove same">—</span>'}</td><th title="${esc(p.ef)}">${esc(p.ef)}</th><td>${p.m}</td><td class="w">${p.w}</td><td class="d">${p.d}</td><td class="l">${p.l}</td><td><b>${p.pts}</b></td></tr>`).join('')+'</tbody>';
 }
 function leagueName(key){const s=state.settings;return key==='pro'?(s.proLeagueName||'Pro League'):key==='semi'?(s.semiLeagueName||'Semi-Pro League'):(s.amateurLeagueName||'Amateur League')}
 function leagueCapacity(key){return key==='pro'?20:key==='semi'?24:30}
