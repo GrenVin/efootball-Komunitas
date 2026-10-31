@@ -1862,11 +1862,38 @@ async function logoutMemberMW(){await supabaseClient.auth.signOut();memberWorkfl
 
 
 
-async function refreshPublicStateMW(){try{const {data,error}=await supabaseClient.from('app_state').select('data,updated_at').eq('id',1).single();if(error)throw error;if(normalizeRemote(data)){refreshMemberAreaMW();}}catch(e){console.warn('Public state refresh failed',e)}}
+let publicStateRefreshPromiseMW=null;
+let publicStateRefreshTimerMW=null;
+// Nomor urut lokal mencegah hasil SELECT lama menimpa event Realtime yang datang belakangan.
+let remoteSnapshotSequenceMW=0;
+async function refreshPublicStateMW(){
+  // Gabungkan permintaan yang datang hampir bersamaan (focus + visibility).
+  if(publicStateRefreshPromiseMW)return publicStateRefreshPromiseMW;
+  const requestSequence=++remoteSnapshotSequenceMW;
+  publicStateRefreshPromiseMW=(async()=>{
+    try{
+      const {data,error}=await supabaseClient.from('app_state').select('data,updated_at').eq('id',1).single();
+      if(error)throw error;
+      if(normalizeRemote(data,'fetch',requestSequence)){renderAll();}
+    }catch(e){console.warn('Public state refresh failed',e);}
+    finally{publicStateRefreshPromiseMW=null;}
+  })();
+  return publicStateRefreshPromiseMW;
+}
+function queuePublicStateRefreshMW(){
+  if(publicStateRefreshTimerMW)clearTimeout(publicStateRefreshTimerMW);
+  publicStateRefreshTimerMW=setTimeout(()=>{
+    publicStateRefreshTimerMW=null;
+    refreshPublicStateMW();
+  },700);
+}
 function copyReportCodeMW(code){if(!code)return;const done=()=>alert('Code berhasil dicopy.');if(navigator.clipboard?.writeText){navigator.clipboard.writeText(code).then(done).catch(()=>{const ta=document.createElement('textarea');ta.value=code;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();done();});}else{const ta=document.createElement('textarea');ta.value=code;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();done();}}
 async function submitReportMW(){const a=currentMemberAccountMW();if(!a)return openMemberAuth('login');const me=currentMemberPlayerMW();const searchAway=document.getElementById('reportAwaySearch');if(searchAway&&!document.getElementById('reportAway').value){searchAway.reportValidity();return alert('Pilih username Away dari hasil pencarian.');}const home=a.playerId,away=document.getElementById('reportAway').value,s1=document.getElementById('reportScoreHome').value.trim(),s2=document.getElementById('reportScoreAway').value.trim(),date=document.getElementById('reportDate').value.trim();if(!me)return alert('Data member yang login tidak ditemukan.');if(!home||!away||home===away)return alert('Pilih Home dan Away yang berbeda.');if(!/^\d+$/.test(s1)||!/^\d+$/.test(s2))return alert('Score harus berupa angka.');if(!validDateMW(date))return alert('The date must be in DD/MM/YYYY format : Example, 01/10/2026.');const p1=state.players.find(p=>p.id===home),p2=state.players.find(p=>p.id===away),code=codeMW();const id='R-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,6);try{const {data,error}=await supabaseClient.rpc('member_create_match_report',{p_id:id,p_reporter_player_id:a.playerId,p_home:home,p_away:away,p_home_name:p1?.ef||home,p_away_name:p2?.ef||away,p_s1:Number(s1),p_s2:Number(s2),p_match_date:date,p_code:code});if(error)throw error;const r=normalizeMemberReportMW(data);const out=document.getElementById('reportResult');out.classList.remove('hidden');out.innerHTML=`<div class="reportCodeBox"><div class="muted small">Report berhasil dikirim</div><div class="reportCode">${esc(r.code)}</div><button type="button" class="btn sm reportCopyBtn" id="copyReportCodeBtn">📋 Copy Code</button><p class="reportInstruction">${esc((state.settings&&state.settings.submitCopyInstruction)||'Copy code ini dan post H2H anda. untuk deskripsi paste code ke grup WhatsApp komunitas efootball id sebagai bukti hasil pertandingan ini sah.')}</p></div>`;document.getElementById('copyReportCodeBtn').onclick=()=>copyReportCodeMW(r.code);document.getElementById('reportScoreHome').value='';document.getElementById('reportScoreAway').value='';document.getElementById('reportDate').value='';await renderMyReportsMW();}catch(e){console.error('submitReportMW',e);alert('Submit report gagal: '+(e.message||e));}}
 document.querySelectorAll('[data-report-status-toggle]').forEach(b=>b.addEventListener('click',()=>{const type=b.dataset.reportStatusToggle;const box=document.getElementById(type==='pending'?'myPendingReportList':type==='verified'?'myVerifiedReportList':'myRejectedReportList');const chev=document.getElementById(type==='pending'?'myPendingChevron':type==='verified'?'myVerifiedChevron':'myRejectedChevron');if(!box)return;const hidden=box.classList.toggle('hidden');if(chev)chev.textContent=hidden?'⌄':'⌃';}));
-document.getElementById('memberAuthBtn')?.addEventListener('click',()=>currentMemberAccountMW()?document.querySelector('[data-tab="profileMember"]')?.click():openMemberAuth('login'));document.getElementById('closeMemberAuth')?.addEventListener('click',closeMemberAuth);document.getElementById('memberAuthModal')?.addEventListener('click',e=>{if(e.target.id==='memberAuthModal')closeMemberAuth()});document.querySelectorAll('.authTab').forEach(b=>b.addEventListener('click',()=>openMemberAuth(b.dataset.authTab)));document.getElementById('loginMemberBtn')?.addEventListener('click',loginMemberMW);document.getElementById('registerMemberBtn')?.addEventListener('click',registerMemberMW);document.getElementById('memberLogoutBtn')?.addEventListener('click',logoutMemberMW);document.getElementById('submitReportBtn')?.addEventListener('click',submitReportMW);document.getElementById('profileLogoutBtn')?.addEventListener('click',logoutMemberMW);document.getElementById('saveRivalBtn')?.addEventListener('click',saveRivalMW);document.getElementById('removeRivalBtn')?.addEventListener('click',removeRivalMW);document.getElementById('changePasswordBtn')?.addEventListener('click',changePasswordMW);document.getElementById('regAvatar')?.addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const img=document.getElementById('regAvatarPreview');img.src=URL.createObjectURL(f);img.style.display='block'});window.addEventListener('storage',e=>{if(e.key===MEMBER_WORKFLOW_KEY){memberWorkflow=JSON.parse(e.newValue||'{}')||{pendingMembers:[],session:null};refreshMemberAreaMW();}if(e.key===KEY){refreshPublicStateMW();}});window.addEventListener('focus',async()=>{await refreshPublicStateMW();if(currentMemberAccountMW())await restoreMemberSessionMW()});document.addEventListener('visibilitychange',async()=>{if(!document.hidden){await refreshPublicStateMW();if(currentMemberAccountMW())await restoreMemberSessionMW()}});// Realtime menggantikan polling 30 detik untuk perubahan profil member.
+document.getElementById('memberAuthBtn')?.addEventListener('click',()=>currentMemberAccountMW()?document.querySelector('[data-tab="profileMember"]')?.click():openMemberAuth('login'));document.getElementById('closeMemberAuth')?.addEventListener('click',closeMemberAuth);document.getElementById('memberAuthModal')?.addEventListener('click',e=>{if(e.target.id==='memberAuthModal')closeMemberAuth()});document.querySelectorAll('.authTab').forEach(b=>b.addEventListener('click',()=>openMemberAuth(b.dataset.authTab)));document.getElementById('loginMemberBtn')?.addEventListener('click',loginMemberMW);document.getElementById('registerMemberBtn')?.addEventListener('click',registerMemberMW);document.getElementById('memberLogoutBtn')?.addEventListener('click',logoutMemberMW);document.getElementById('submitReportBtn')?.addEventListener('click',submitReportMW);document.getElementById('profileLogoutBtn')?.addEventListener('click',logoutMemberMW);document.getElementById('saveRivalBtn')?.addEventListener('click',saveRivalMW);document.getElementById('removeRivalBtn')?.addEventListener('click',removeRivalMW);document.getElementById('changePasswordBtn')?.addEventListener('click',changePasswordMW);document.getElementById('regAvatar')?.addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const img=document.getElementById('regAvatarPreview');img.src=URL.createObjectURL(f);img.style.display='block'});window.addEventListener('storage',e=>{if(e.key===MEMBER_WORKFLOW_KEY){memberWorkflow=JSON.parse(e.newValue||'{}')||{pendingMembers:[],session:null};refreshMemberAreaMW();}if(e.key===KEY){queuePublicStateRefreshMW();}});
+window.addEventListener('focus',async()=>{queuePublicStateRefreshMW();if(currentMemberAccountMW())await restoreMemberSessionMW()});
+document.addEventListener('visibilitychange',async()=>{if(!document.hidden){queuePublicStateRefreshMW();if(currentMemberAccountMW())await restoreMemberSessionMW()}});
+// Tidak ada polling data berkala: sinkronisasi mengandalkan Realtime dan satu refresh saat tab aktif kembali.
 // Sinkronisasi saat tab kembali aktif/fokus tetap dipertahankan sebagai pengaman.
 if(typeof supabaseClient!=='undefined'){
  supabaseClient.channel('member-profile-session-live')
@@ -1911,40 +1938,29 @@ function periodLabel(key){
 
 
 state.settings={...DEFAULT_SETTINGS,...(state.settings||{})};state.memberAccounts=Array.isArray(state.memberAccounts)?state.memberAccounts:[];state.matchReports=Array.isArray(state.matchReports)?state.matchReports:[];
-function normalizeRemote(row){
+function normalizeRemote(row,source='fetch',requestSequence=remoteSnapshotSequenceMW){
   if(!row||!row.data||typeof row.data!=='object')return false;
-  // Ignore out-of-order Realtime/read responses so an older snapshot cannot
-  // replace a newer snapshot already applied in this browser tab.
-  const incomingStamp=row.updated_at?Date.parse(row.updated_at):0;
-  const acceptedStamp=Number(localStorage.getItem(KEY+'_remote_updated_at')||0);
-  if(incomingStamp && acceptedStamp && incomingStamp < acceptedStamp)return false;
+  // Snapshot Realtime selalu menang atas SELECT yang masih dalam perjalanan.
+  // Jangan memakai updated_at sebagai penentu urutan: nilainya dibuat oleh jam
+  // perangkat admin dan bisa berbeda antar perangkat.
+  if(source==='realtime')remoteSnapshotSequenceMW++;
+  else if(requestSequence!==remoteSnapshotSequenceMW)return false;
   const incoming=row.data;
   const remoteMatches=Array.isArray(incoming.matches)?incoming.matches:[];
   const remotePlayers=Array.isArray(incoming.players)?incoming.players:[];
-  // Safety guard: after this tab has a populated state, do not let a partial
-  // snapshot silently erase existing matches/players. A month filter must
-  // never be allowed to replace the underlying all-time dataset.
-  const currentMatches=Array.isArray(state.matches)?state.matches:[];
-  const currentPlayers=Array.isArray(state.players)?state.players:[];
-  if(state.dataInitialized && currentMatches.length>0 && remoteMatches.length<currentMatches.length){
-    console.warn('[Ranking sync] Snapshot ditolak: jumlah pertandingan lebih sedikit.', {current:currentMatches.length,incoming:remoteMatches.length,updated_at:row.updated_at||null});
-    return false;
-  }
-  if(state.dataInitialized && currentPlayers.length>0 && remotePlayers.length<currentPlayers.length){
-    console.warn('[Ranking sync] Snapshot ditolak: jumlah pemain lebih sedikit.', {current:currentPlayers.length,incoming:remotePlayers.length,updated_at:row.updated_at||null});
-    return false;
-  }
+  // app_state adalah sumber data utama. Jangan menolak snapshot server hanya
+  // karena jumlah barisnya lebih sedikit daripada cache lokal perangkat.
   state={...incoming,players:remotePlayers,matches:remoteMatches};
   state.dataInitialized=true;
   state.settings={...DEFAULT_SETTINGS,...(state.settings||{})};
   state.memberAccounts=Array.isArray(state.memberAccounts)?state.memberAccounts:[];
   state.matchReports=Array.isArray(state.matchReports)?state.matchReports:[];
   localStorage.setItem(KEY,JSON.stringify(state));
-  if(incomingStamp)localStorage.setItem(KEY+'_remote_updated_at',String(incomingStamp));
+  if(row.updated_at)localStorage.setItem(KEY+'_remote_updated_at',String(Date.parse(row.updated_at)||row.updated_at));
   return true;
 }
 
-async function loadRemote(){try{const {data,error}=await supabaseClient.from('app_state').select('data,updated_at').eq('id',1).single();if(!error&&normalizeRemote(data)){renderAll();}}catch(e){console.warn('Supabase load failed',e)}}
+async function loadRemote(){const requestSequence=++remoteSnapshotSequenceMW;try{const {data,error}=await supabaseClient.from('app_state').select('data,updated_at').eq('id',1).single();if(!error&&normalizeRemote(data,'fetch',requestSequence)){renderAll();}}catch(e){console.warn('Supabase load failed',e)}}
 function save(){localStorage.setItem(KEY,JSON.stringify(state));renderAll();return Promise.resolve()}
 restoreMemberSessionMW();
 supabaseClient.auth.onAuthStateChange((event,session)=>{if(session) setTimeout(restoreMemberSessionMW,0); else if(event==='SIGNED_OUT'){memberWorkflow.session=null;saveMemberWorkflow();refreshMemberAreaMW();}});
@@ -2275,7 +2291,26 @@ function renderAll(){applyPublicSettings();renderHome();removeDuplicateEfidRanki
 
 document.querySelectorAll('.navbtn').forEach(btn=>btn.addEventListener('click',()=>{if(btn.classList.contains('memberPrivateNav')&&!currentMemberAccountMW()){openMemberAuth('login');return;}closeHistory();document.querySelectorAll('.navbtn').forEach(x=>x.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.tab').forEach(x=>x.classList.add('hidden'));document.getElementById(btn.dataset.tab).classList.remove('hidden')}));
 document.getElementById('rankingPeriodSelect')?.addEventListener('change',()=>renderRanking());document.getElementById('rankingAllTimeTab')?.addEventListener('click',()=>setRankingMode('total'));document.getElementById('rankingMonthlyTab')?.addEventListener('click',()=>setRankingMode('monthly'));document.getElementById('playerSearch')?.addEventListener('input',renderPlayers);document.getElementById('playerFilter')?.addEventListener('change',renderPlayers);document.getElementById('closeModal').addEventListener('click',closeHistory);document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeHistory()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeHistory()});
-supabaseClient.channel('app-state-live').on('postgres_changes',{event:'UPDATE',schema:'public',table:'app_state',filter:'id=eq.1'},payload=>{if(normalizeRemote(payload.new)){renderAll()}}).subscribe();
+let appStateRealtimeConnectedMW=false;
+let appStateRealtimeNeedsResyncMW=false;
+supabaseClient.channel('app-state-live')
+ .on('postgres_changes',{event:'UPDATE',schema:'public',table:'app_state',filter:'id=eq.1'},payload=>{
+   // Payload Realtime sudah membawa snapshot terbaru; gunakan langsung tanpa SELECT tambahan.
+   if(normalizeRemote(payload.new,'realtime')){renderAll();}
+ })
+ .subscribe(status=>{
+   if(status==='SUBSCRIBED'){
+     const wasDisconnected=appStateRealtimeNeedsResyncMW;
+     appStateRealtimeConnectedMW=true;
+     appStateRealtimeNeedsResyncMW=false;
+     // Jika sempat putus, ambil satu snapshot untuk menutup celah event yang terlewat.
+     if(wasDisconnected)refreshPublicStateMW();
+   }else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT'||status==='CLOSED'){
+     if(appStateRealtimeConnectedMW)appStateRealtimeNeedsResyncMW=true;
+     else appStateRealtimeNeedsResyncMW=true;
+     appStateRealtimeConnectedMW=false;
+   }
+ });
 renderAll();
 setInterval(()=>{
   const month=currentCalendarMonthKey();
