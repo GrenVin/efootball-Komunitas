@@ -308,9 +308,22 @@ body:after{background:linear-gradient(90deg,rgba(0,0,0,.28),transparent 28%,tran
 </div>
 <div class="settingCard adminViewSection" id="adminSectionApproval">
 <div class="row" style="margin-bottom:10px"><div><h3 style="margin:0">🛡️ APPROVAL</h3><div class="small muted">Semua proses approval hanya tersedia setelah admin login.</div></div><span class="memberCount" id="approvalSummary">0 pending</span></div>
-<div class="approvalCardsGrid">
-<section class="approvalPanelCard" id="approvalMemberPanel"><div class="approvalPanelHeading"><h4>👤 Approval Member <span class="approvalCount" id="approvalMemberCount">0</span></h4><p>Periksa data pendaftar. Setelah disetujui, member masuk ke Manage Members.</p></div><div class="approvalList" id="approvalMemberList"><div class="approvalEmpty">Memuat pendaftaran member...</div></div></section>
-<section class="approvalPanelCard" id="approvalMatchPanel"><div class="approvalPanelHeading"><h4>⚽ Approval Match <span class="approvalCount" id="approvalMatchCount">0</span></h4><p>Cocokkan verification code dengan H2H WhatsApp. Match yang disetujui masuk ke Record Match / Match History.</p></div><div class="approvalList" id="approvalMatchList"><div class="approvalEmpty">Memuat report pertandingan...</div></div></section>
+<div class="approvalWorkspace">
+<aside class="approvalSidebar">
+  <div class="approvalSidebarBrand"><span class="approvalSidebarIcon">🛡️</span><div><b>Approval Center</b><small>Manajemen persetujuan</small></div></div>
+  <div class="approvalSidebarLabel">PENDING REQUESTS</div>
+  <button type="button" class="approvalSideTab" data-approval-tab="match" aria-selected="true">
+    <span class="approvalSideIcon">⚽</span><span class="approvalSideText">Approval Match</span><span class="approvalCount" id="approvalSideMatchCount">0</span>
+  </button>
+  <button type="button" class="approvalSideTab" data-approval-tab="member" aria-selected="false">
+    <span class="approvalSideIcon">👤</span><span class="approvalSideText">Approval Member</span><span class="approvalCount" id="approvalSideMemberCount">0</span>
+  </button>
+  <div class="approvalSidebarFoot"><span class="approvalLiveDot"></span> Sinkronisasi aktif</div>
+</aside>
+<div class="approvalMain">
+  <section class="approvalPanelCard" id="approvalMatchPanel"><div class="approvalPanelHeading"><div><h4>⚽ Approval Match <span class="approvalCount" id="approvalMatchCount">0</span></h4><p>Cocokkan verification code dengan H2H WhatsApp. Match yang disetujui masuk ke Record Match / Match History.</p></div><span class="approvalMainTag">MATCH REPORTS</span></div><div class="approvalList" id="approvalMatchList"><div class="approvalEmpty">Memuat report pertandingan...</div></div></section>
+  <section class="approvalPanelCard" id="approvalMemberPanel" hidden><div class="approvalPanelHeading"><div><h4>👤 Approval Member <span class="approvalCount" id="approvalMemberCount">0</span></h4><p>Periksa data pendaftar. Setelah disetujui, member masuk ke Manage Members.</p></div><span class="approvalMainTag">MEMBER REQUESTS</span></div><div class="approvalList" id="approvalMemberList"><div class="approvalEmpty">Memuat pendaftaran member...</div></div></section>
+</div>
 </div></div>
 </div>
 <hr class="hr sectionDivider" data-for="approval"/>
@@ -556,7 +569,7 @@ function renderApprovalMemberRows(){
   box.innerHTML=memberProfilesAdmin.map(item=>{
     const id=escAttr(item.id);
     const avatar=item.avatar_url?`<img class="approvalAvatar" src="${escAttr(item.avatar_url)}" alt="Foto ${approvalText(item.username,'member')}">`:'';
-    return `<article class="approvalRow"><div>${avatar}<b>${approvalText(item.username||item.full_name,'Member')}</b><div class="approvalMatchMeta">${approvalText(item.email)}</div></div><div class="approvalMatchMeta">WhatsApp: ${approvalText(item.whatsapp)}<br>Telegram: ${approvalText(item.telegram)}<br>Daftar: ${approvalText(item.created_at)}</div><div class="approvalActions"><button class="btn primary sm" data-approve-member="${id}">Setujui</button><button class="btn danger sm" data-reject-member="${id}">Tolak</button></div></article>`;
+    return `<article class="approvalRow"><div>${avatar}<b>${approvalText(item.username||item.full_name,'Member')}</b><div class="approvalMatchMeta">${approvalText(item.email)}</div></div><div class="approvalMatchMeta">WhatsApp: ${approvalText(item.whatsapp)}<br>Telegram: ${approvalText(item.telegram)}<br>Daftar: ${approvalText(item.created_at)}</div><div class="approvalActions"><button class="btn primary sm" data-approve-member="${id}">Approve</button><button class="btn danger sm" data-reject-member="${id}">Reject</button></div></article>`;
   }).join('');
   box.querySelectorAll('[data-approve-member]').forEach(b=>b.addEventListener('click',()=>approveMember(b.dataset.approveMember)));
   box.querySelectorAll('[data-reject-member]').forEach(b=>b.addEventListener('click',()=>rejectMember(b.dataset.rejectMember)));
@@ -568,7 +581,7 @@ function renderApprovalMatchRows(){
     const id=escAttr(r.id);
     const home=r.home_name||state.players.find(p=>String(p.id)===String(r.home))?.ef||r.home;
     const away=r.away_name||state.players.find(p=>String(p.id)===String(r.away))?.ef||r.away;
-    return `<article class="approvalRow approvalMatchRow"><div class="approvalMatchInfo"><div class="approvalMatchMain">${approvalText(home)} <span>vs</span> ${approvalText(away)}</div><div class="approvalMatchMeta">Skor: <b>${approvalText(r.s1)} - ${approvalText(r.s2)}</b> · Tanggal: ${approvalText(r.date)}<br>Pengirim: ${approvalText(r.reporterPlayerId)} · ${approvalText(r.created_at)}</div></div><div class="approvalMatchStatus"><span class="statusBadge">PENDING</span><div class="approvalCode"><span class="approvalCodeLabel">VERIFICATION CODE</span><b>${approvalText(r.code)}</b></div></div><div class="approvalActions"><button class="btn primary sm" data-approve-report="${id}">Setujui</button><button class="btn danger sm" data-reject-report="${id}">Tolak</button></div></article>`;
+    return `<article class="approvalRow approvalMatchRow"><div class="approvalMatchInfo"><div class="approvalMatchMain">${approvalText(home)} <span>vs</span> ${approvalText(away)}</div><div class="approvalMatchMeta">Skor: <b>${approvalText(r.s1)} - ${approvalText(r.s2)}</b> · ${approvalText(r.date)}</div></div><div class="approvalMatchStatus"><span class="statusBadge">PENDING</span><div class="approvalCode"><span class="approvalCodeLabel">VERIFICATION CODE</span><b>${approvalText(r.code)}</b></div></div><div class="approvalActions"><button class="btn primary sm" data-approve-report="${id}">Approve</button><button class="btn danger sm" data-reject-report="${id}">Reject</button></div></article>`;
   }).join('');
   box.querySelectorAll('[data-approve-report]').forEach(b=>b.addEventListener('click',()=>approveReport(b.dataset.approveReport)));
   box.querySelectorAll('[data-reject-report]').forEach(b=>b.addEventListener('click',()=>rejectReport(b.dataset.rejectReport)));
@@ -956,4 +969,204 @@ renderAll();</script>
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 </script>
+
+<style id="approval-sidebar-style">
+/* Approval Center — Sidebar Style */
+#adminSectionApproval{padding:18px!important}
+#adminSectionApproval>.row{align-items:center;margin-bottom:14px!important}
+.approvalWorkspace{display:grid;grid-template-columns:228px minmax(0,1fr);gap:14px;align-items:stretch;min-width:0}
+.approvalSidebar{min-width:0;padding:13px;border:1px solid rgba(140,166,184,.24);border-radius:13px;background:linear-gradient(160deg,rgba(19,28,37,.96),rgba(7,12,18,.97));display:flex;flex-direction:column;gap:7px}
+.approvalSidebarBrand{display:flex;align-items:center;gap:10px;padding:5px 4px 16px;border-bottom:1px solid rgba(145,164,180,.16);margin-bottom:8px}
+.approvalSidebarIcon{width:38px;height:38px;display:grid;place-items:center;border-radius:11px;background:linear-gradient(145deg,rgba(57,185,255,.18),rgba(99,223,224,.08));border:1px solid rgba(99,223,224,.28);font-size:20px}
+.approvalSidebarBrand b{display:block;font-size:13px;color:#f0f4f7}
+.approvalSidebarBrand small{display:block;margin-top:3px;color:#93a4b1;font-size:10px}
+.approvalSidebarLabel{padding:5px 7px;color:#8295a4;font-size:9px;font-weight:900;letter-spacing:.12em}
+.approvalSideTab{width:100%;min-width:0;display:flex;align-items:center;gap:9px;padding:11px 10px;border:1px solid transparent;border-radius:9px;background:transparent;color:#c5d0d8;text-align:left;cursor:pointer;font:inherit;transition:background .16s,border-color .16s,color .16s}
+.approvalSideTab:hover{background:rgba(133,170,190,.08);border-color:rgba(133,190,210,.16)}
+.approvalSideTab.active{color:#f2f7fa;background:linear-gradient(100deg,rgba(37,144,204,.24),rgba(74,201,203,.10));border-color:rgba(83,193,220,.35);box-shadow:inset 3px 0 #54c9ed}
+.approvalSideIcon{width:22px;flex:0 0 22px;text-align:center;font-size:16px}
+.approvalSideText{flex:1;min-width:0;font-size:12px;font-weight:800}
+.approvalSideTab .approvalCount{margin-left:auto;min-width:21px;height:21px;background:rgba(87,205,225,.12);border-color:rgba(87,205,225,.25);color:#a8eaf1}
+.approvalSidebarFoot{margin-top:auto;padding:13px 5px 3px;border-top:1px solid rgba(145,164,180,.15);color:#8fa3af;font-size:10px;display:flex;align-items:center;gap:7px}
+.approvalLiveDot{width:7px;height:7px;border-radius:50%;background:#54d6a1;box-shadow:0 0 9px rgba(84,214,161,.6)}
+.approvalMain{min-width:0}
+.approvalMain .approvalPanelCard{height:100%;margin:0;padding:15px;background:linear-gradient(145deg,rgba(12,22,31,.96),rgba(6,11,17,.97));border-color:rgba(140,166,184,.25)}
+.approvalMain .approvalPanelHeading{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.approvalMain .approvalPanelHeading h4{font-size:15px}
+.approvalMainTag{flex:0 0 auto;padding:5px 8px;border:1px solid rgba(145,164,180,.2);border-radius:6px;color:#8fa4b2;font-size:9px;font-weight:900;letter-spacing:.08em}
+.approvalMain .approvalList{gap:8px}
+.approvalMain .approvalRow{padding:11px}
+.approvalMain #approvalMatchList .approvalMatchRow{grid-template-columns:minmax(0,1fr) 112px;gap:9px 12px}
+.approvalMain #approvalMatchList .approvalActions{grid-column:1/-1}
+#adminSectionApproval .approvalMain #approvalMemberPanel[hidden],
+#adminSectionApproval .approvalMain #approvalMatchPanel[hidden]{display:none!important}
+@media(max-width:900px){
+ .approvalWorkspace{grid-template-columns:190px minmax(0,1fr);gap:10px}
+ .approvalSidebar{padding:10px}
+ .approvalMain .approvalPanelCard{padding:12px}
+}
+@media(max-width:650px){
+ #adminSectionApproval{padding:12px!important}
+ .approvalWorkspace{grid-template-columns:minmax(0,1fr);gap:10px}
+ .approvalSidebar{padding:9px;gap:5px}
+ .approvalSidebarBrand{display:none}
+ .approvalSidebarLabel{padding:2px 4px 5px}
+ .approvalSidebarFoot{display:none}
+ .approvalSideTab{display:inline-flex;width:auto;flex:1;justify-content:center;padding:9px 8px;gap:6px}
+ .approvalSidebar{display:flex;flex-direction:row;flex-wrap:wrap}
+ .approvalSidebarLabel{width:100%}
+ .approvalSideText{flex:0 1 auto;font-size:11px}
+ .approvalSideTab .approvalCount{margin-left:1px}
+ .approvalMain .approvalPanelCard{padding:11px}
+ .approvalMain .approvalPanelHeading{align-items:flex-start}
+ .approvalMainTag{display:none}
+ .approvalMain #approvalMatchList .approvalMatchRow{grid-template-columns:minmax(0,1fr) 92px;padding:10px;gap:8px}
+}
+</style>
+<script id="approval-sidebar-interactions">
+(function(){
+  function setApprovalTab(tab){
+    var match=document.getElementById('approvalMatchPanel');
+    var member=document.getElementById('approvalMemberPanel');
+    if(!match||!member)return;
+    var showMatch=tab!=='member';
+    match.hidden=!showMatch;
+    member.hidden=showMatch;
+    document.querySelectorAll('[data-approval-tab]').forEach(function(btn){
+      var active=btn.getAttribute('data-approval-tab')===(showMatch?'match':'member');
+      btn.classList.toggle('active',active);
+      btn.setAttribute('aria-selected',active?'true':'false');
+    });
+  }
+  document.querySelectorAll('[data-approval-tab]').forEach(function(btn){
+    btn.addEventListener('click',function(){setApprovalTab(btn.getAttribute('data-approval-tab'));});
+  });
+  var sourceMatch=document.getElementById('approvalMatchCount');
+  var sourceMember=document.getElementById('approvalMemberCount');
+  function syncSideCounts(){
+    var m=document.getElementById('approvalSideMatchCount');
+    var u=document.getElementById('approvalSideMemberCount');
+    if(m&&sourceMatch)m.textContent=sourceMatch.textContent;
+    if(u&&sourceMember)u.textContent=sourceMember.textContent;
+  }
+  if(sourceMatch&&sourceMember){
+    new MutationObserver(syncSideCounts).observe(sourceMatch,{childList:true,characterData:true,subtree:true});
+    new MutationObserver(syncSideCounts).observe(sourceMember,{childList:true,characterData:true,subtree:true});
+  }
+  syncSideCounts();
+  setApprovalTab('match');
+})();
+</script>
+
+
+<style id="approval-minimal-metadata">
+#approvalMatchList .approvalMatchMeta{line-height:1.5}
+#approvalMatchList .approvalMatchMeta br{display:none}
+</style>
+<style id="approval-ultra-compact-layout">
+/* Compact Approval: reduce unused space on desktop and mobile */
+#adminSectionApproval{padding:10px!important}
+#adminSectionApproval>.row{margin-bottom:8px!important;gap:8px!important}
+#adminSectionApproval .approvalWorkspace{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+#adminSectionApproval .approvalSidebar{
+  display:flex;flex-direction:row;align-items:center;flex-wrap:wrap;
+  gap:6px;padding:7px 9px;border-radius:10px;min-height:0
+}
+#adminSectionApproval .approvalSidebarBrand,
+#adminSectionApproval .approvalSidebarLabel,
+#adminSectionApproval .approvalSidebarFoot{display:none!important}
+#adminSectionApproval .approvalSideTab{
+  width:auto;flex:0 0 auto;min-width:145px;justify-content:flex-start;
+  padding:7px 10px;gap:7px;border-radius:8px
+}
+#adminSectionApproval .approvalSideIcon{font-size:14px;width:18px;flex-basis:18px}
+#adminSectionApproval .approvalSideText{font-size:11px}
+#adminSectionApproval .approvalSideTab .approvalCount{min-width:19px;height:19px;font-size:10px}
+#adminSectionApproval .approvalMain .approvalPanelCard{
+  height:auto;padding:10px 11px;border-radius:10px
+}
+#adminSectionApproval .approvalMain .approvalPanelHeading{gap:8px;padding-bottom:7px}
+#adminSectionApproval .approvalMain .approvalPanelHeading h4{font-size:13px;margin:0}
+#adminSectionApproval .approvalMain .approvalPanelHeading p{font-size:10px;line-height:1.35;margin:3px 0 0}
+#adminSectionApproval .approvalMainTag{font-size:8px;padding:4px 6px}
+#adminSectionApproval .approvalMain .approvalList{gap:6px}
+#adminSectionApproval .approvalMain .approvalRow{padding:8px 10px}
+#adminSectionApproval #approvalMatchList .approvalMatchRow{
+  grid-template-columns:minmax(0,1fr) 112px 190px;
+  grid-template-areas:"info status actions";
+  gap:8px 12px;align-items:center;padding:9px 11px;border-radius:9px
+}
+#adminSectionApproval #approvalMatchList .approvalMatchInfo{align-self:center}
+#adminSectionApproval #approvalMatchList .approvalMatchMain{font-size:12px;line-height:1.25}
+#adminSectionApproval #approvalMatchList .approvalMatchMeta{font-size:10px;line-height:1.3;margin-top:3px}
+#adminSectionApproval #approvalMatchList .approvalMatchStatus{
+  padding-left:10px;gap:4px;justify-content:center
+}
+#adminSectionApproval #approvalMatchList .approvalMatchStatus .statusBadge{font-size:9px}
+#adminSectionApproval #approvalMatchList .approvalCodeLabel{font-size:8px}
+#adminSectionApproval #approvalMatchList .approvalCode b{font-size:17px;margin-top:2px}
+#adminSectionApproval #approvalMatchList .approvalActions{
+  grid-area:actions;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:5px;padding:0;border:0;align-self:center
+}
+#adminSectionApproval #approvalMatchList .approvalActions .btn.sm{
+  min-height:31px;padding:5px 7px;font-size:10px;border-radius:7px
+}
+@media(max-width:760px){
+  #adminSectionApproval{padding:8px!important}
+  #adminSectionApproval .approvalSidebar{padding:6px;gap:5px}
+  #adminSectionApproval .approvalSideTab{min-width:0;flex:1 1 135px;justify-content:center;padding:7px 6px}
+  #adminSectionApproval .approvalSideText{font-size:10px}
+  #adminSectionApproval .approvalMain .approvalPanelCard{padding:9px}
+  #adminSectionApproval .approvalMainTag{display:none}
+  #adminSectionApproval #approvalMatchList .approvalMatchRow{
+    grid-template-columns:minmax(0,1fr) 88px;
+    grid-template-areas:"info status" "actions actions";
+    gap:7px 9px;padding:8px
+  }
+  #adminSectionApproval #approvalMatchList .approvalMatchStatus{padding-left:8px}
+  #adminSectionApproval #approvalMatchList .approvalActions{
+    grid-column:1/-1;padding-top:6px;border-top:1px solid rgba(145,174,190,.13)
+  }
+  #adminSectionApproval #approvalMatchList .approvalActions .btn.sm{min-height:30px;font-size:10px}
+}
+@media(max-width:380px){
+  #adminSectionApproval .approvalSideTab{flex-basis:100%}
+  #adminSectionApproval #approvalMatchList .approvalMatchRow{grid-template-columns:minmax(0,1fr) 78px}
+  #adminSectionApproval #approvalMatchList .approvalMatchMain{font-size:11px}
+  #adminSectionApproval #approvalMatchList .approvalCode b{font-size:16px}
+}
+</style>
+
+
+<style id="approval-match-readable-typography">
+/* Readability refinement: preserve all current grid columns and card geometry */
+#adminSectionApproval,
+#adminSectionApproval button,
+#adminSectionApproval .approvalPanelCard{
+  font-family:"Segoe UI",Tahoma,Arial,sans-serif!important;
+}
+#adminSectionApproval #approvalMatchList .approvalMatchMain{
+  font-size:15px!important;
+  line-height:1.35!important;
+  font-weight:750!important;
+  letter-spacing:.005em;
+}
+#adminSectionApproval #approvalMatchList .approvalMatchMeta{
+  font-size:12px!important;
+  line-height:1.45!important;
+  font-weight:500!important;
+  margin-top:4px!important;
+  color:#b1c4cf!important;
+}
+@media(max-width:760px){
+  #adminSectionApproval #approvalMatchList .approvalMatchMain{font-size:14px!important}
+  #adminSectionApproval #approvalMatchList .approvalMatchMeta{font-size:11px!important}
+}
+@media(max-width:380px){
+  #adminSectionApproval #approvalMatchList .approvalMatchMain{font-size:13px!important}
+  #adminSectionApproval #approvalMatchList .approvalMatchMeta{font-size:10.5px!important}
+}
+</style>
+
 </body></html>
