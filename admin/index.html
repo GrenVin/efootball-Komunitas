@@ -424,8 +424,8 @@ async function approveMember(id){
   }
 }
 async function rejectMember(id){const item=memberProfilesAdmin.find(x=>String(x.id)===String(id));if(!item)return;if(!adminSession)return alert('Sesi Admin belum aktif. Silakan login kembali.');if(!confirm(`Tolak pendaftaran ${item.username}? Akun login dan profil pendaftar akan dihapus. Member aktif dan riwayat H2H tidak disentuh.`))return;try{const {data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();if(sessionError)throw sessionError;const token=sessionData?.session?.access_token;if(!token)throw new Error('Sesi Admin tidak ditemukan. Silakan login kembali.');const {data,error}=await supabaseClient.functions.invoke('admin-delete-member',{body:{action:'rejectPending',playerId:String(item.id),userId:String(item.id),username:String(item.username||'')},headers:{Authorization:`Bearer ${token}`}});if(error)throw new Error(data?.error||error.message||'Edge Function gagal.');if(!data?.success)throw new Error(data?.error||'Reject member gagal.');memberProfilesAdmin=memberProfilesAdmin.filter(x=>String(x.id)!==String(item.id));await renderApprovals();alert(`${item.username} berhasil ditolak. Username dapat didaftarkan kembali.`)}catch(e){console.error('Reject member gagal:',e);alert('Reject member gagal: '+(e.message||String(e)))}}
-async function approveReport(id){const r=memberMatchReportsAdmin.find(x=>x.id===id);if(!r)return;if(r.status!=='pending')return;const p1=state.players.find(p=>p.id===r.home),p2=state.players.find(p=>p.id===r.away);if(!p1||!p2)return alert('Player untuk report ini tidak ditemukan.');const match={id:Date.now(),p1:r.home,p2:r.away,s1:Number(r.s1),s2:Number(r.s2),date:r.date,type:'table',source:'member-report',reportId:r.id,verificationCode:r.code,reportedBy:r.reporterAccountId};state.matches.push(match);state.matchReports=Array.isArray(state.matchReports)?state.matchReports:[];state.matchReports.push({...r,status:'verified',verifiedAt:Date.now(),verifiedMatchId:match.id,reporterName:p1.ef===r.reporterPlayerId?p1.ef:(state.players.find(p=>p.id===r.reporterPlayerId)?.ef||r.reporterPlayerId)});const ok=await save();if(!ok){state.matches=state.matches.filter(x=>String(x.id)!==String(match.id));state.matchReports=state.matchReports.filter(x=>String(x.id)!==String(r.id));return;}try{const {error}=await supabaseClient.rpc('admin_set_match_report_status',{p_id:r.id,p_status:'verified',p_verified_match_id:String(match.id)});if(error)throw error;await renderApprovals();renderHistoryAdmin();alert(`Match ${r.code} APPROVED dan otomatis masuk Record Match / Match History.`)}catch(e){console.error(e);alert('Match sudah tersimpan, tetapi status report gagal diperbarui: '+(e.message||e));}}
-async function rejectReport(id){const r=memberMatchReportsAdmin.find(x=>x.id===id);if(!r)return;if(!confirm(`Reject report ${r.code}?`))return;try{const {error}=await supabaseClient.rpc('admin_set_match_report_status',{p_id:r.id,p_status:'rejected'});if(error)throw error;await renderApprovals();}catch(e){console.error(e);alert('Reject report gagal: '+(e.message||e));}}
+async function approveReport(id){const r=memberMatchReportsAdmin.find(x=>String(x.id)===String(id));if(!r)return;if(r.status!=='pending')return;const p1=state.players.find(p=>p.id===r.home),p2=state.players.find(p=>p.id===r.away);if(!p1||!p2)return alert('Player untuk report ini tidak ditemukan.');const match={id:Date.now(),p1:r.home,p2:r.away,s1:Number(r.s1),s2:Number(r.s2),date:r.date,type:'table',source:'member-report',reportId:r.id,verificationCode:r.code,reportedBy:r.reporterAccountId};state.matches.push(match);state.matchReports=Array.isArray(state.matchReports)?state.matchReports:[];state.matchReports.push({...r,status:'verified',verifiedAt:Date.now(),verifiedMatchId:match.id,reporterName:p1.ef===r.reporterPlayerId?p1.ef:(state.players.find(p=>p.id===r.reporterPlayerId)?.ef||r.reporterPlayerId)});const ok=await save();if(!ok){state.matches=state.matches.filter(x=>String(x.id)!==String(match.id));state.matchReports=state.matchReports.filter(x=>String(x.id)!==String(r.id));return;}try{const {error}=await supabaseClient.rpc('admin_set_match_report_status',{p_id:r.id,p_status:'verified',p_verified_match_id:String(match.id)});if(error)throw error;await renderApprovals();renderHistoryAdmin();alert(`Match ${r.code} APPROVED dan otomatis masuk Record Match / Match History.`)}catch(e){console.error(e);alert('Match sudah tersimpan, tetapi status report gagal diperbarui: '+(e.message||e));}}
+async function rejectReport(id){const r=memberMatchReportsAdmin.find(x=>String(x.id)===String(id));if(!r)return;if(!confirm(`Reject report ${r.code}?`))return;try{const {error}=await supabaseClient.rpc('admin_set_match_report_status',{p_id:r.id,p_status:'rejected'});if(error)throw error;await renderApprovals();}catch(e){console.error(e);alert('Reject report gagal: '+(e.message||e));}}
 
 window.approveMember=approveMember; window.rejectMember=rejectMember; window.approveReport=approveReport; window.rejectReport=rejectReport;
 async function resetMemberPassword(id){
@@ -536,12 +536,72 @@ function renderSelects(){
     if(players.some(p=>String(p.id)===String(previous)))el.value=previous;
   });
 }
-// The current uploaded source does not contain the approval-list loader.
-// Keep other admin screens working while clearly reporting this missing module.
+// Approval Center: read pending registrations/reports from Supabase.
+let memberProfilesAdmin = [];
+let memberMatchReportsAdmin = [];
+let approvalLoadInProgress = false;
+function approvalText(value, fallback='-'){
+  const s=String(value??'').trim();
+  return s ? esc(s) : fallback;
+}
+function updateApprovalCounters(){
+  const members=memberProfilesAdmin.length, matches=memberMatchReportsAdmin.length, total=members+matches;
+  const set=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=String(value)};
+  set('approvalMemberCount',members); set('approvalMatchCount',matches);
+  set('approvalNavCount',total); set('approvalSummary',`${total} pending`);
+}
+function renderApprovalMemberRows(){
+  const box=document.getElementById('approvalMemberList'); if(!box)return;
+  if(!memberProfilesAdmin.length){box.innerHTML='<div class="approvalEmpty">Tidak ada pendaftaran member yang menunggu persetujuan.</div>';return;}
+  box.innerHTML=memberProfilesAdmin.map(item=>{
+    const id=escAttr(item.id);
+    const avatar=item.avatar_url?`<img class="approvalAvatar" src="${escAttr(item.avatar_url)}" alt="Foto ${approvalText(item.username,'member')}">`:'';
+    return `<article class="approvalRow"><div>${avatar}<b>${approvalText(item.username||item.full_name,'Member')}</b><div class="approvalMatchMeta">${approvalText(item.email)}</div></div><div class="approvalMatchMeta">WhatsApp: ${approvalText(item.whatsapp)}<br>Telegram: ${approvalText(item.telegram)}<br>Daftar: ${approvalText(item.created_at)}</div><div class="approvalActions"><button class="btn primary sm" data-approve-member="${id}">Setujui</button><button class="btn danger sm" data-reject-member="${id}">Tolak</button></div></article>`;
+  }).join('');
+  box.querySelectorAll('[data-approve-member]').forEach(b=>b.addEventListener('click',()=>approveMember(b.dataset.approveMember)));
+  box.querySelectorAll('[data-reject-member]').forEach(b=>b.addEventListener('click',()=>rejectMember(b.dataset.rejectMember)));
+}
+function renderApprovalMatchRows(){
+  const box=document.getElementById('approvalMatchList'); if(!box)return;
+  if(!memberMatchReportsAdmin.length){box.innerHTML='<div class="approvalEmpty">Tidak ada laporan pertandingan yang menunggu persetujuan.</div>';return;}
+  box.innerHTML=memberMatchReportsAdmin.map(r=>{
+    const id=escAttr(r.id);
+    const home=r.home_name||state.players.find(p=>String(p.id)===String(r.home))?.ef||r.home;
+    const away=r.away_name||state.players.find(p=>String(p.id)===String(r.away))?.ef||r.away;
+    return `<article class="approvalRow approvalMatchRow"><div class="approvalMatchInfo"><div class="approvalMatchMain">${approvalText(home)} <span>vs</span> ${approvalText(away)}</div><div class="approvalMatchMeta">Skor: <b>${approvalText(r.s1)} - ${approvalText(r.s2)}</b> · Tanggal: ${approvalText(r.date)}<br>Pengirim: ${approvalText(r.reporterPlayerId)} · ${approvalText(r.created_at)}</div></div><div class="approvalMatchStatus"><span class="statusBadge">PENDING</span><div class="approvalCode"><span class="approvalCodeLabel">VERIFICATION CODE</span><b>${approvalText(r.code)}</b></div></div><div class="approvalActions"><button class="btn primary sm" data-approve-report="${id}">Setujui</button><button class="btn danger sm" data-reject-report="${id}">Tolak</button></div></article>`;
+  }).join('');
+  box.querySelectorAll('[data-approve-report]').forEach(b=>b.addEventListener('click',()=>approveReport(b.dataset.approveReport)));
+  box.querySelectorAll('[data-reject-report]').forEach(b=>b.addEventListener('click',()=>rejectReport(b.dataset.rejectReport)));
+}
 async function renderApprovals(){
-  const summary=document.getElementById('approvalSummary');
-  if(summary)summary.textContent='Approval belum dimuat';
-  console.warn('Approval loader is not present in this admin HTML file.');
+  const memberBox=document.getElementById('approvalMemberList');
+  const matchBox=document.getElementById('approvalMatchList');
+  if(!adminSession){
+    if(memberBox)memberBox.innerHTML='<div class="approvalEmpty">Login admin untuk memuat pengajuan.</div>';
+    if(matchBox)matchBox.innerHTML='<div class="approvalEmpty">Login admin untuk memuat laporan.</div>';
+    memberProfilesAdmin=[]; memberMatchReportsAdmin=[]; updateApprovalCounters(); return;
+  }
+  if(approvalLoadInProgress)return;
+  approvalLoadInProgress=true;
+  if(memberBox)memberBox.innerHTML='<div class="approvalEmpty">Memuat pendaftaran member...</div>';
+  if(matchBox)matchBox.innerHTML='<div class="approvalEmpty">Memuat report pertandingan...</div>';
+  try{
+    const [membersResult,reportsResult]=await Promise.all([
+      supabaseClient.from('member_profiles').select('*').eq('status','pending'),
+      supabaseClient.from('member_match_reports').select('*').eq('status','pending')
+    ]);
+    if(membersResult.error){console.error('[Approval] member_profiles:',membersResult.error);if(memberBox)memberBox.innerHTML=`<div class="approvalEmpty">Gagal memuat pendaftaran: ${esc(membersResult.error.message)}</div>`;memberProfilesAdmin=[];}
+    else memberProfilesAdmin=(membersResult.data||[]).map(x=>({...x})).sort((a,b)=>String(b.created_at||'').localeCompare(String(a.created_at||'')));
+    if(reportsResult.error){console.error('[Approval] member_match_reports:',reportsResult.error);if(matchBox)matchBox.innerHTML=`<div class="approvalEmpty">Gagal memuat report: ${esc(reportsResult.error.message)}</div>`;memberMatchReportsAdmin=[];}
+    else memberMatchReportsAdmin=(reportsResult.data||[]).map(x=>({...x,date:x.match_date||x.date||'',reporterAccountId:x.auth_user_id,reporterPlayerId:x.reporter_player_id,home:String(x.home??''),away:String(x.away??'')})).sort((a,b)=>String(b.created_at||'').localeCompare(String(a.created_at||'')));
+    updateApprovalCounters();
+    if(!membersResult.error)renderApprovalMemberRows();
+    if(!reportsResult.error)renderApprovalMatchRows();
+  }catch(e){
+    console.error('[Approval] load failed:',e);
+    if(memberBox)memberBox.innerHTML=`<div class="approvalEmpty">Gagal memuat pendaftaran: ${esc(e.message||e)}</div>`;
+    if(matchBox)matchBox.innerHTML=`<div class="approvalEmpty">Gagal memuat report: ${esc(e.message||e)}</div>`;
+  }finally{approvalLoadInProgress=false;}
 }
 function repairApprovedMembersInManageMembers(){ return; }
 
